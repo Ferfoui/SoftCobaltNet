@@ -2,8 +2,8 @@ plugins {
     id 'java'
 }
 
-group = 'fr.ferfoui.softcobalt.server'
-version = 'unspecified'
+group = projectGroup + '.server'
+version = projectVersion
 
 repositories {
     mavenCentral()
