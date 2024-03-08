@@ -1,6 +1,7 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+/uiDesigner.xml
 # Editor-based HTTP Client requests
 /httpRequests/
 # Datasource local storage ignored files
@@ -8,3 +9,4 @@
 /dataSources.local.xml
 # GitHub Copilot persisted chat sessions
 /copilot/chatSessions
+
