@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class SocketServerThread extends Thread {
 
-    private final ServerSocketManager serverSocketManager = new ServerSocketManager();
+    private final ServerSocketManager serverSocketManager = new ServerSocketManager("server-socket");
 
     SocketServerThread() {
         super("SocketServerThread");
@@ -18,14 +18,14 @@ public class SocketServerThread extends Thread {
     @Override
     public void run() {
         try {
-            serverSocketManager.start(Constants.SERVER_PORT, (in, out) -> {
+            serverSocketManager.start(Constants.SERVER_PORT, (in, out, logger) -> {
                 String request = null;
                 try {
                     request = in.readLine();
-                    System.out.println("Received request: " + request);
+                    logger.info("Received request: {}", request);
                     out.println("Server response for: '" + request + "'");
                 } catch (IOException e) {
-                    System.out.println("Error reading request: " + e.getMessage());
+                    logger.error("Error reading request", e);
                 }
                 return request != null && !request.equals("exit");
             });

@@ -5,16 +5,14 @@ plugins {
 group = projectGroup + '.server'
 version = projectVersion
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     implementation project(':api')
     implementation project(':common')
+
+    implementation(libs.slog4j.simple)
 }
 
 test {

@@ -1,5 +1,14 @@
 rootProject.name = projectName
 
+dependencyResolutionManagement {
+    repositories {
+        maven {
+            url 'https://mvnrepository.com/artifact/'
+        }
+        mavenCentral()
+    }
+}
+
 include 'api'
 include 'common'
 include 'client'

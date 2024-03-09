@@ -1,0 +1,10 @@
+[versions]
+slog4j = "2.0.12"
+jetbrains = "24.1.0"
+
+[libraries]
+slog4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slog4j" }
+slog4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slog4j" }
+
+jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains" }
+
