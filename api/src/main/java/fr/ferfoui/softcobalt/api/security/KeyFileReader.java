@@ -1,4 +1,4 @@
-package fr.ferfoui.softcobalt.api.cryptography;
+package fr.ferfoui.softcobalt.api.security;
 
 import java.io.File;
 import java.io.IOException;

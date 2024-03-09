@@ -1,4 +1,4 @@
-package fr.ferfoui.softcobalt.api.cryptography;
+package fr.ferfoui.softcobalt.api.security;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,12 +10,13 @@ import java.security.spec.InvalidKeySpecException;
  */
 public class RsaKeysManager {
 
-    private final String RSA_ALGORITHM = "RSA";
+    public final String RSA_ALGORITHM = "RSA";
 
     private KeyPair keyPair;
 
     /**
      * Generate a new pair of RSA keys
+     *
      * @throws NoSuchAlgorithmException If the algorithm is not found
      */
     public void generateKeys() throws NoSuchAlgorithmException {
@@ -26,6 +27,7 @@ public class RsaKeysManager {
 
     /**
      * Read the keys from the given files
+     *
      * @param publicKeyFile The file containing the public key
      * @param privateKeyFile The file containing the private key
      * @throws IOException If an error occurs while reading the files
@@ -41,8 +43,14 @@ public class RsaKeysManager {
         );
     }
 
+    public void saveKeysIntoFiles(File publicKeyFile, File privateKeyFile) throws IOException {
+        KeyFileSaver.saveKeyToFile(keyPair.getPublic(), publicKeyFile);
+        KeyFileSaver.saveKeyToFile(keyPair.getPrivate(), privateKeyFile);
+    }
+
     /**
      * Get the public key
+     *
      * @return The public key
      */
     public PublicKey getPublicKey() {
@@ -51,6 +59,7 @@ public class RsaKeysManager {
 
     /**
      * Get the private key
+     *
      * @return The private key
      */
     public PrivateKey getPrivateKey() {
@@ -59,6 +68,7 @@ public class RsaKeysManager {
 
     /**
      * Set the key pair
+     *
      * @param keyPair The key pair to set
      */
     public void setKeyPair(KeyPair keyPair) {

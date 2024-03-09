@@ -37,7 +37,7 @@ public class ServerSocketManager {
         running = true;
         while (running) {
             try {
-                ClientSocketHandler clientHandler = new ClientSocketHandler(serverSocket.accept(), port, serverLogic, null);
+                ClientSocketHandler clientHandler = new ClientSocketHandler(serverSocket.accept(), serverLogic, null);
                 clientHandler.start();
                 clientHandlers.add(clientHandler);
             } catch (SocketException e) {

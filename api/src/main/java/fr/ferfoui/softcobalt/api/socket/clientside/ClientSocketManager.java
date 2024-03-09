@@ -4,10 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 
 public class ClientSocketManager {
@@ -17,7 +14,8 @@ public class ClientSocketManager {
     private final Logger logger;
 
     public ClientSocketManager(@Nullable Logger logger) {
-        this.logger = logger == null ? LoggerFactory.getLogger("client-socket-manager") : logger;
+        this.logger = (logger == null) ?
+                LoggerFactory.getLogger("client-socket-manager") : logger;
     }
 
     /**
@@ -29,6 +27,7 @@ public class ClientSocketManager {
     public void startConnection(String ip, int port) throws IOException {
         logger.info("Starting connection to {}:{}", ip, port);
         server = new Socket(ip, port);
+        var output = server.getOutputStream();
         out = new PrintWriter(server.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(server.getInputStream()));
     }
