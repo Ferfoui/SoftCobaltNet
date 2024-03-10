@@ -19,6 +19,7 @@ public class ServerSocketManager {
 
     /**
      * Constructor for the ServerSocketManager
+     *
      * @param name The name of the logger to use
      */
     public ServerSocketManager(String name) {
@@ -27,6 +28,7 @@ public class ServerSocketManager {
 
     /**
      * Start the server on the given port
+     *
      * @param port The port to start the server on
      * @param serverLogic The logic to process the requests
      * @throws IOException If the server socket cannot be created
@@ -35,11 +37,13 @@ public class ServerSocketManager {
         logger.info("Starting server on port: {}", port);
         serverSocket = new ServerSocket(port);
         running = true;
+        int clientId = 0;
         while (running) {
             try {
-                ClientSocketHandler clientHandler = new ClientSocketHandler(serverSocket.accept(), serverLogic, null);
+                ClientSocketHandler clientHandler = new ClientSocketHandler(serverSocket.accept(), serverLogic, clientId, null);
                 clientHandler.start();
                 clientHandlers.add(clientHandler);
+                clientId++;
             } catch (SocketException e) {
                 // The Socket was closed while accept() was waiting, break the loop
                 if (!running) {
@@ -51,6 +55,7 @@ public class ServerSocketManager {
 
     /**
      * Get the list of client handlers
+     *
      * @return The list of client handlers
      */
     public ArrayList<ClientSocketHandler> getClientHandlers() {
@@ -59,6 +64,7 @@ public class ServerSocketManager {
 
     /**
      * Stop the server
+     *
      * @throws IOException If the server socket cannot be closed
      */
     public void stop() throws IOException {

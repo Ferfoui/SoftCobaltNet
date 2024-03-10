@@ -1,4 +1,4 @@
-package fr.ferfoui.softcobalt.api.security;
+package fr.ferfoui.softcobalt.api.security.key;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +43,13 @@ public class RsaKeysManager {
         );
     }
 
+    /**
+     * Save the keys into the given files
+     *
+     * @param publicKeyFile The file to save the public key into
+     * @param privateKeyFile The file to save the private key into
+     * @throws IOException If an error occurs while writing the files
+     */
     public void saveKeysIntoFiles(File publicKeyFile, File privateKeyFile) throws IOException {
         KeyFileSaver.saveKeyToFile(keyPair.getPublic(), publicKeyFile);
         KeyFileSaver.saveKeyToFile(keyPair.getPrivate(), privateKeyFile);
@@ -74,4 +81,5 @@ public class RsaKeysManager {
     public void setKeyPair(KeyPair keyPair) {
         this.keyPair = keyPair;
     }
+
 }

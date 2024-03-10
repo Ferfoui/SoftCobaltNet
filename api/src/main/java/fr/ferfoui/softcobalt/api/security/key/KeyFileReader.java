@@ -1,4 +1,4 @@
-package fr.ferfoui.softcobalt.api.security;
+package fr.ferfoui.softcobalt.api.security.key;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,13 +13,16 @@ import java.security.spec.X509EncodedKeySpec;
 
 /**
  * Class used to read public and private keys from files.
+ *
+ * @see KeyFileSaver
  */
 public class KeyFileReader {
+
     /**
      * Reads a public key from a file.
      *
      * @param publicKeyFile the file containing the public key
-     * @param algorithm the algorithm used to generate the key
+     * @param algorithm the algorithm used to generate the key (e.g. "RSA/ECB/PKCS1Padding")
      * @return the public key
      * @throws IOException if an I/O error occurs
      * @throws NoSuchAlgorithmException if the algorithm is not available
@@ -38,7 +41,7 @@ public class KeyFileReader {
      * Reads a private key from a file.
      *
      * @param privateKeyFile the file containing the private key
-     * @param algorithm the algorithm used to generate the key
+     * @param algorithm the algorithm used to generate the key (e.g. "RSA/ECB/PKCS1Padding")
      * @return the private key
      * @throws IOException if an I/O error occurs
      * @throws NoSuchAlgorithmException if the algorithm is not available

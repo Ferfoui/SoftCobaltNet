@@ -13,5 +13,5 @@ public interface RequestProcessor {
      * @param logger the logger to use
      * @return true if the server should continue listening for requests
      */
-    boolean processRequest (BufferedReader in, PrintWriter out, Logger logger);
+    boolean processRequest (BufferedReader in, PrintWriter out, int clientId, Logger logger);
 }

@@ -13,19 +13,23 @@ import java.net.Socket;
 public class ClientSocketHandler extends Thread {
     private final Socket clientSocket;
     private final RequestProcessor serverLogic;
+    private final int clientId;
     private final Logger logger;
 
     /**
      * Constructor for the ClientSocketHandler
+     *
      * @param socket The socket to handle
      * @param requestProcessor The logic to process the requests
      * @param logger The logger to use, if null, a new logger will be created
      */
-    public ClientSocketHandler(Socket socket, RequestProcessor requestProcessor, @Nullable Logger logger) {
+    public ClientSocketHandler(Socket socket, RequestProcessor requestProcessor, int clientId, @Nullable Logger logger) {
+        super("client-socket-handler-" + clientId);
         this.clientSocket = socket;
         this.serverLogic = requestProcessor;
+        this.clientId = clientId;
         this.logger = (logger == null)
-                ? LoggerFactory.getLogger("client-socket-handler " + this.getName()) : logger;
+                ? LoggerFactory.getLogger(this.getName()) : LoggerFactory.getLogger(logger.getName() + "-" + this.getName());
     }
 
     /**
@@ -34,7 +38,7 @@ public class ClientSocketHandler extends Thread {
     @Override
     public void run() {
         try {
-            logger.info("Client connected on port {}", clientSocket.getPort());
+            logger.info("Client-{} connected on port {}", clientId, clientSocket.getPort());
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -42,7 +46,7 @@ public class ClientSocketHandler extends Thread {
             boolean continueListening = true;
 
             while (continueListening) {
-                continueListening = serverLogic.processRequest(in, out, logger);
+                continueListening = serverLogic.processRequest(in, out, clientId, logger);
                 logger.debug("The server should continue listening: {}", continueListening);
             }
 
@@ -57,6 +61,7 @@ public class ClientSocketHandler extends Thread {
 
     /**
      * Check if the socket is closed
+     *
      * @return true if the socket is closed, false otherwise
      */
     public boolean isClosed() {
