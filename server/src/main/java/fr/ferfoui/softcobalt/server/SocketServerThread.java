@@ -9,8 +9,10 @@ import fr.ferfoui.softcobalt.api.socket.serverside.ServerSocketManager;
 import fr.ferfoui.softcobalt.common.Constants;
 import fr.ferfoui.softcobalt.common.Utils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.GeneralSecurityException;
@@ -23,6 +25,8 @@ public class SocketServerThread extends Thread {
 
     private final RsaKeysManager rsaKeysManager = new RsaKeysManager();
 
+    private final Logger logger = LoggerFactory.getLogger("SocketServerThread");
+
     SocketServerThread() {
         super("SocketServerThread");
     }
@@ -30,12 +34,28 @@ public class SocketServerThread extends Thread {
     @Override
     public void run() {
 
-        try {
-            rsaKeysManager.generateKeys();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+        File privateKeyFile = new File(Constants.PRIVATE_KEY_FILE);
+        File publicKeyFile = new File(Constants.PUBLIC_KEY_FILE);
+
+        // If the keys don't exist, generate them and save them to files or if they exist, load them from files
+        if (!privateKeyFile.exists() || !publicKeyFile.exists()) {
+            try {
+                logger.info("Generating RSA keys");
+                rsaKeysManager.generateKeys();
+                rsaKeysManager.saveKeysToFiles(publicKeyFile, privateKeyFile);
+            } catch (NoSuchAlgorithmException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                logger.info("Loading RSA keys from files");
+                rsaKeysManager.loadKeysFromFiles(publicKeyFile, privateKeyFile);
+            } catch (IOException | GeneralSecurityException e) {
+                throw new RuntimeException(e);
+            }
         }
 
+        // Start the server
         try {
             serverSocketManager.start(Constants.SERVER_PORT, new NiceRequestProcessor());
         } catch (IOException e) {
@@ -64,14 +84,17 @@ public class SocketServerThread extends Thread {
                 request = in.readLine();
                 logger.info("Received request: {}", request);
 
-                if (!checkRequestIsEncoded(request)) {
+                if (!Utils.isBase64(request)) {
                     logger.info("Request is not encoded, sending public key");
                     sendPublicKey(out);
                 } else {
                     String decryptedRequest = decryptRequest(request);
 
                     logger.info("Decoded request: {}", decryptedRequest);
-                    out.println("Server response for: '" + decryptedRequest + "'");
+
+                    String encryptedResponse = RequestFormatting.encryptAndEncode("Server response for: '" + decryptedRequest + "'", rsaKeysManager.getPrivateKey(), rsaKeysManager.RSA_ALGORITHM);
+                    logger.info("Sending encrypted response: {}", encryptedResponse);
+                    out.println(encryptedResponse);
                     request = decryptedRequest;
                 }
 
@@ -81,10 +104,6 @@ public class SocketServerThread extends Thread {
                 logger.error("Error decrypting request", e);
             }
             return request != null && !request.equals("exit");
-        }
-
-        private boolean checkRequestIsEncoded(String request) {
-            return Utils.isBase64(request);
         }
 
         private String decryptRequest(String request) throws GeneralSecurityException {

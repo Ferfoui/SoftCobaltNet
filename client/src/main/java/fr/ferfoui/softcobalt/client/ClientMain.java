@@ -4,10 +4,13 @@ import fr.ferfoui.softcobalt.api.requestformat.PublicKeySendingProtocol;
 import fr.ferfoui.softcobalt.api.requestformat.RequestFormatting;
 import fr.ferfoui.softcobalt.api.socket.clientside.ClientSocketManager;
 import fr.ferfoui.softcobalt.common.Constants;
+import fr.ferfoui.softcobalt.common.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -16,6 +19,14 @@ import java.security.spec.InvalidKeySpecException;
 public class ClientMain {
 
     private static final String SERVER_IP = "127.0.0.1";
+
+    /*static {
+        try {
+            SERVER_IP = Inet4Address.getByName("www.softcobalt.live").getHostAddress();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }*/
 
     private static final Logger logger = LoggerFactory.getLogger(ClientMain.class);
     private static final ClientSocketManager clientSocketManager = new ClientSocketManager(logger);
@@ -47,6 +58,10 @@ public class ClientMain {
                 } catch (GeneralSecurityException e) {
                     throw new RuntimeException(e);
                 }
+            }
+
+            if (Utils.isBase64(response)) {
+                response = RequestFormatting.decodeAndDecrypt(response, publicKey, "RSA");
             }
 
             logger.info("Received response: {}", response);

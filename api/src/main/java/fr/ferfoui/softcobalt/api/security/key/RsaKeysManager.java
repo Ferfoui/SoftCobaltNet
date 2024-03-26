@@ -34,7 +34,7 @@ public class RsaKeysManager {
      * @throws InvalidKeySpecException If the keys are invalid
      * @throws NoSuchAlgorithmException If the algorithm is not found
      */
-    public void readKeysFromFiles(File publicKeyFile, File privateKeyFile)
+    public void loadKeysFromFiles(File publicKeyFile, File privateKeyFile)
             throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
 
         keyPair = new KeyPair(
@@ -50,7 +50,7 @@ public class RsaKeysManager {
      * @param privateKeyFile The file to save the private key into
      * @throws IOException If an error occurs while writing the files
      */
-    public void saveKeysIntoFiles(File publicKeyFile, File privateKeyFile) throws IOException {
+    public void saveKeysToFiles(File publicKeyFile, File privateKeyFile) throws IOException {
         KeyFileSaver.saveKeyToFile(keyPair.getPublic(), publicKeyFile);
         KeyFileSaver.saveKeyToFile(keyPair.getPrivate(), privateKeyFile);
     }

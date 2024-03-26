@@ -9,6 +9,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
@@ -51,7 +52,7 @@ public class KeyFileReader {
             throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 
         byte[] privateKeyBytes = Files.readAllBytes(privateKeyFile.toPath());
-        EncodedKeySpec privateKeySpec = new X509EncodedKeySpec(privateKeyBytes);
+        EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
 
         return KeyFactory.getInstance(algorithm).generatePrivate(privateKeySpec);
     }
