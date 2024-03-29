@@ -7,6 +7,12 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * Class used to manage the client socket connection.
+ *
+ * @author Ferfoui
+ * @since 1.0
+ */
 public class ClientSocketManager {
     private Socket server;
     private PrintWriter out;
@@ -27,7 +33,6 @@ public class ClientSocketManager {
     public void startConnection(String ip, int port) throws IOException {
         logger.info("Starting connection to {}:{}", ip, port);
         server = new Socket(ip, port);
-        var output = server.getOutputStream();
         out = new PrintWriter(server.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(server.getInputStream()));
     }

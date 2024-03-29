@@ -8,7 +8,9 @@ import java.security.Key;
 /**
  * Class used to save keys to files.
  *
+ * @author Ferfoui
  * @see KeyFileReader
+ * @since 1.0
  */
 public class KeyFileSaver {
 

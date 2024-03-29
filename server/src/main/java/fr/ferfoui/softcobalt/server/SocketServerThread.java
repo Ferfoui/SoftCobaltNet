@@ -1,7 +1,9 @@
 package fr.ferfoui.softcobalt.server;
 
+import fr.ferfoui.softcobalt.api.ApiConstants;
 import fr.ferfoui.softcobalt.api.requestformat.PublicKeySendingProtocol;
 import fr.ferfoui.softcobalt.api.requestformat.RequestFormatting;
+import fr.ferfoui.softcobalt.api.security.key.AsymmetricKeysManager;
 import fr.ferfoui.softcobalt.api.security.key.RsaKeysManager;
 import fr.ferfoui.softcobalt.api.socket.serverside.ClientSocketHandler;
 import fr.ferfoui.softcobalt.api.socket.serverside.RequestProcessor;
@@ -23,7 +25,7 @@ public class SocketServerThread extends Thread {
 
     private final ServerSocketManager serverSocketManager = new ServerSocketManager("server-socket");
 
-    private final RsaKeysManager rsaKeysManager = new RsaKeysManager();
+    private final AsymmetricKeysManager rsaKeysManager = new RsaKeysManager();
 
     private final Logger logger = LoggerFactory.getLogger("SocketServerThread");
 
@@ -92,7 +94,7 @@ public class SocketServerThread extends Thread {
 
                     logger.info("Decoded request: {}", decryptedRequest);
 
-                    String encryptedResponse = RequestFormatting.encryptAndEncode("Server response for: '" + decryptedRequest + "'", rsaKeysManager.getPrivateKey(), rsaKeysManager.RSA_ALGORITHM);
+                    String encryptedResponse = RequestFormatting.encryptAndEncode("Server response for: '" + decryptedRequest + "'", rsaKeysManager.getPrivateKey(), ApiConstants.SecurityConstants.RSA_ALGORITHM);
                     logger.info("Sending encrypted response: {}", encryptedResponse);
                     out.println(encryptedResponse);
                     request = decryptedRequest;
@@ -107,7 +109,7 @@ public class SocketServerThread extends Thread {
         }
 
         private String decryptRequest(String request) throws GeneralSecurityException {
-            return RequestFormatting.decodeAndDecrypt(request, rsaKeysManager.getPrivateKey(), rsaKeysManager.RSA_ALGORITHM);
+            return RequestFormatting.decodeAndDecrypt(request, rsaKeysManager.getPrivateKey(), ApiConstants.SecurityConstants.RSA_ALGORITHM);
         }
 
         private void sendPublicKey(PrintWriter out) {

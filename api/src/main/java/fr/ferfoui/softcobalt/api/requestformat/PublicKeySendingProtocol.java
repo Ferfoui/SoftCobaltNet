@@ -12,6 +12,9 @@ import java.util.Base64;
 
 /**
  * Protocol used to send and receive public keys.
+ *
+ * @author Ferfoui
+ * @since 1.0
  */
 public class PublicKeySendingProtocol {
     public static final String PUBLIC_KEY_SPLITTER = ":::";

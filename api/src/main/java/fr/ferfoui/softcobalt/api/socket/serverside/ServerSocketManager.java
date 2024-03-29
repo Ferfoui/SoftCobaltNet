@@ -9,6 +9,12 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Class used to manage the server socket connection.
+ *
+ * @author Ferfoui
+ * @since 1.0
+ */
 public class ServerSocketManager {
 
     private final Logger logger;

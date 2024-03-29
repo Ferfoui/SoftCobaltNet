@@ -10,6 +10,15 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/**
+ * Class used to handle the client socket connection.
+ * <p>
+ * This class is used to handle the client socket connection and process the requests.
+ * It is used by the ServerSocketManager to handle the client connections.
+ *
+ * @author Ferfoui
+ * @since 1.0
+ */
 public class ClientSocketHandler extends Thread {
     private final Socket clientSocket;
     private final RequestProcessor serverLogic;

@@ -8,6 +8,12 @@ import java.util.Base64;
 
 /**
  * Class used to format requests and responses.
+ * <p>
+ * This class is used to format requests and responses by encrypting and encoding messages.
+ * It is used by the client and server to format the messages.
+ *
+ * @author Ferfoui
+ * @since 1.0
  */
 public class RequestFormatting {
 

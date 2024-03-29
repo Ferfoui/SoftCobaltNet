@@ -1,5 +1,7 @@
 package fr.ferfoui.softcobalt.api.security.key;
 
+import fr.ferfoui.softcobalt.api.ApiConstants.SecurityConstants;
+
 import java.io.File;
 import java.io.IOException;
 import java.security.*;
@@ -7,10 +9,11 @@ import java.security.spec.InvalidKeySpecException;
 
 /**
  * Class to manage RSA keys
+ *
+ * @author Ferfoui
+ * @since 1.0
  */
-public class RsaKeysManager {
-
-    public final String RSA_ALGORITHM = "RSA";
+public class RsaKeysManager implements AsymmetricKeysManager {
 
     private KeyPair keyPair;
 
@@ -18,9 +21,11 @@ public class RsaKeysManager {
      * Generate a new pair of RSA keys
      *
      * @throws NoSuchAlgorithmException If the algorithm is not found
+     * @since 1.0
      */
+    @Override
     public void generateKeys() throws NoSuchAlgorithmException {
-        KeyPairGenerator generator = KeyPairGenerator.getInstance(RSA_ALGORITHM);
+        KeyPairGenerator generator = KeyPairGenerator.getInstance(SecurityConstants.RSA_ALGORITHM);
         generator.initialize(2048);
         keyPair = generator.generateKeyPair();
     }
@@ -33,13 +38,16 @@ public class RsaKeysManager {
      * @throws IOException If an error occurs while reading the files
      * @throws InvalidKeySpecException If the keys are invalid
      * @throws NoSuchAlgorithmException If the algorithm is not found
+     * @see KeyFileReader
+     * @since 1.0
      */
+    @Override
     public void loadKeysFromFiles(File publicKeyFile, File privateKeyFile)
             throws IOException, InvalidKeySpecException, NoSuchAlgorithmException {
 
         keyPair = new KeyPair(
-                KeyFileReader.readPublicKeyFromFile(publicKeyFile, RSA_ALGORITHM),
-                KeyFileReader.readPrivateKeyFromFile(privateKeyFile, RSA_ALGORITHM)
+                KeyFileReader.readPublicKeyFromFile(publicKeyFile, SecurityConstants.RSA_ALGORITHM),
+                KeyFileReader.readPrivateKeyFromFile(privateKeyFile, SecurityConstants.RSA_ALGORITHM)
         );
     }
 
@@ -49,35 +57,26 @@ public class RsaKeysManager {
      * @param publicKeyFile The file to save the public key into
      * @param privateKeyFile The file to save the private key into
      * @throws IOException If an error occurs while writing the files
+     * @see KeyFileSaver
+     * @since 1.0
      */
+    @Override
     public void saveKeysToFiles(File publicKeyFile, File privateKeyFile) throws IOException {
         KeyFileSaver.saveKeyToFile(keyPair.getPublic(), publicKeyFile);
         KeyFileSaver.saveKeyToFile(keyPair.getPrivate(), privateKeyFile);
     }
 
-    /**
-     * Get the public key
-     *
-     * @return The public key
-     */
+    @Override
     public PublicKey getPublicKey() {
         return keyPair.getPublic();
     }
 
-    /**
-     * Get the private key
-     *
-     * @return The private key
-     */
+    @Override
     public PrivateKey getPrivateKey() {
         return keyPair.getPrivate();
     }
 
-    /**
-     * Set the key pair
-     *
-     * @param keyPair The key pair to set
-     */
+    @Override
     public void setKeyPair(KeyPair keyPair) {
         this.keyPair = keyPair;
     }

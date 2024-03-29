@@ -15,7 +15,9 @@ import java.security.spec.X509EncodedKeySpec;
 /**
  * Class used to read public and private keys from files.
  *
+ * @author Ferfoui
  * @see KeyFileSaver
+ * @since 1.0
  */
 public class KeyFileReader {
 

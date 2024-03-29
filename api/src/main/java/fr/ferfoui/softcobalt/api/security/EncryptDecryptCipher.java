@@ -6,7 +6,10 @@ import java.security.GeneralSecurityException;
 import java.security.Key;
 
 /**
- * Class used to encrypt and decrypt strings using a key and an algorithm.
+ * Static class used to encrypt and decrypt strings using a key and an algorithm.
+ *
+ * @author Ferfoui
+ * @since 1.0
  */
 public class EncryptDecryptCipher {
 
