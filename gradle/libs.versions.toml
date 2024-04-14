@@ -1,5 +1,5 @@
 [versions]
-slog4j = "2.0.12"
+slog4j = "2.0.13"
 jetbrains = "24.1.0"
 junit = "5.9.1"
 

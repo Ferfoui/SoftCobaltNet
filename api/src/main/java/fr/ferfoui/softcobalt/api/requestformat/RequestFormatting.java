@@ -7,7 +7,7 @@ import java.security.Key;
 import java.util.Base64;
 
 /**
- * Class used to format requests and responses.
+ * Static utility class used to format requests and responses.
  * <p>
  * This class is used to format requests and responses by encrypting and encoding messages.
  * It is used by the client and server to format the messages.
@@ -20,14 +20,14 @@ public class RequestFormatting {
     /**
      * Encrypts a message and encodes it in Base64 format.
      *
-     * @param clearMessage the message to encrypt and encode
+     * @param clearMessage the message to encryptString and encode
      * @param key the key to use for encryption
      * @param algorithm the algorithm to use for encryption (e.g. "RSA/ECB/PKCS1Padding")
      * @return the encrypted and encoded message
      * @throws GeneralSecurityException if a security error occurs like an invalid key or algorithm
      */
     public static String encryptAndEncode(String clearMessage, Key key, String algorithm) throws GeneralSecurityException {
-        byte[] encryptedMessage = EncryptDecryptCipher.encrypt(clearMessage, key, algorithm);
+        byte[] encryptedMessage = EncryptDecryptCipher.encryptString(clearMessage, key, algorithm);
 
         return encode(encryptedMessage);
     }
@@ -35,7 +35,7 @@ public class RequestFormatting {
     /**
      * Decodes a Base64 encoded message and decrypts it.
      *
-     * @param encryptedMessage the message to decode and decrypt
+     * @param encryptedMessage the message to decode and decryptToString
      * @param key the key to use for decryption
      * @param algorithm the algorithm to use for decryption (e.g. "RSA/ECB/PKCS1Padding")
      * @return the decrypted message
@@ -44,7 +44,7 @@ public class RequestFormatting {
     public static String decodeAndDecrypt(String encryptedMessage, Key key, String algorithm) throws GeneralSecurityException {
         byte[] decodedMessage = decode(encryptedMessage);
 
-        return EncryptDecryptCipher.decrypt(decodedMessage, key, algorithm);
+        return EncryptDecryptCipher.decryptToString(decodedMessage, key, algorithm);
     }
 
     /**

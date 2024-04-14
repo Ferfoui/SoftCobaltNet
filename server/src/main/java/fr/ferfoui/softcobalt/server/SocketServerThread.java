@@ -5,6 +5,7 @@ import fr.ferfoui.softcobalt.api.requestformat.PublicKeySendingProtocol;
 import fr.ferfoui.softcobalt.api.requestformat.RequestFormatting;
 import fr.ferfoui.softcobalt.api.security.key.AsymmetricKeysManager;
 import fr.ferfoui.softcobalt.api.security.key.RsaKeysManager;
+import fr.ferfoui.softcobalt.api.socket.serverside.ClientConnection;
 import fr.ferfoui.softcobalt.api.socket.serverside.ClientSocketHandler;
 import fr.ferfoui.softcobalt.api.socket.serverside.RequestProcessor;
 import fr.ferfoui.softcobalt.api.socket.serverside.ServerSocketManager;
@@ -17,13 +18,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 public class SocketServerThread extends Thread {
 
-    private final ServerSocketManager serverSocketManager = new ServerSocketManager("server-socket");
+    private final ServerSocketManager serverSocketManager;
 
     private final AsymmetricKeysManager rsaKeysManager = new RsaKeysManager();
 
@@ -31,6 +33,7 @@ public class SocketServerThread extends Thread {
 
     SocketServerThread() {
         super("SocketServerThread");
+        serverSocketManager = new ServerSocketManager("server-socket", NiceRequestProcessor::new);
     }
 
     @Override
@@ -59,7 +62,7 @@ public class SocketServerThread extends Thread {
 
         // Start the server
         try {
-            serverSocketManager.start(Constants.SERVER_PORT, new NiceRequestProcessor());
+            serverSocketManager.start(Constants.SERVER_PORT);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -78,17 +81,27 @@ public class SocketServerThread extends Thread {
     }
 
 
-    private class NiceRequestProcessor implements RequestProcessor {
+    private class NiceRequestProcessor extends ClientConnection {
+        /**
+         * Constructor for the ClientConnection.
+         *
+         * @param socket   The socket to handle
+         * @param clientId The id of the client
+         */
+        public NiceRequestProcessor(Socket socket, int clientId) {
+            super(socket, clientId);
+        }
+
         @Override
-        public boolean processRequest(BufferedReader in, PrintWriter out, int clientId, Logger logger) {
+        public boolean processRequest(Logger logger) {
             String request = null;
             try {
-                request = in.readLine();
+                request = in.readUTF();
                 logger.info("Received request: {}", request);
 
                 if (!Utils.isBase64(request)) {
                     logger.info("Request is not encoded, sending public key");
-                    sendPublicKey(out);
+                    sendPublicKey();
                 } else {
                     String decryptedRequest = decryptRequest(request);
 
@@ -96,7 +109,7 @@ public class SocketServerThread extends Thread {
 
                     String encryptedResponse = RequestFormatting.encryptAndEncode("Server response for: '" + decryptedRequest + "'", rsaKeysManager.getPrivateKey(), ApiConstants.SecurityConstants.RSA_ALGORITHM);
                     logger.info("Sending encrypted response: {}", encryptedResponse);
-                    out.println(encryptedResponse);
+                    out.writeUTF(encryptedResponse);
                     request = decryptedRequest;
                 }
 
@@ -112,8 +125,8 @@ public class SocketServerThread extends Thread {
             return RequestFormatting.decodeAndDecrypt(request, rsaKeysManager.getPrivateKey(), ApiConstants.SecurityConstants.RSA_ALGORITHM);
         }
 
-        private void sendPublicKey(PrintWriter out) {
-            out.println(PublicKeySendingProtocol.createPublicKeyMessage(rsaKeysManager.getPublicKey()));
+        private void sendPublicKey() throws IOException {
+            out.writeUTF(PublicKeySendingProtocol.createPublicKeyMessage(rsaKeysManager.getPublicKey()));
         }
     }
 }

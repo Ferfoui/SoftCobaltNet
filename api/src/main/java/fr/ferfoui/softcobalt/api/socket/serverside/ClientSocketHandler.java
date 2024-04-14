@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 
 /**
@@ -21,7 +22,7 @@ import java.net.Socket;
  */
 public class ClientSocketHandler extends Thread {
     private final Socket clientSocket;
-    private final RequestProcessor serverLogic;
+    private final ClientConnection clientConnection;
     private final int clientId;
     private final Logger logger;
 
@@ -29,16 +30,27 @@ public class ClientSocketHandler extends Thread {
      * Constructor for the ClientSocketHandler
      *
      * @param socket The socket to handle
-     * @param requestProcessor The logic to process the requests
+     * @param clientConnection The client connection to use
+     * @param clientId The id of the client
      * @param logger The logger to use, if null, a new logger will be created
      */
-    public ClientSocketHandler(Socket socket, RequestProcessor requestProcessor, int clientId, @Nullable Logger logger) {
+    public ClientSocketHandler(Socket socket, ClientConnection clientConnection, int clientId, @Nullable Logger logger) {
         super("client-socket-handler-" + clientId);
         this.clientSocket = socket;
-        this.serverLogic = requestProcessor;
         this.clientId = clientId;
-        this.logger = (logger == null)
-                ? LoggerFactory.getLogger(this.getName()) : LoggerFactory.getLogger(logger.getName() + "-" + this.getName());
+        this.logger = getLogger(logger);
+        this.clientConnection = clientConnection;
+    }
+
+    /**
+     * Get the logger to use
+     *
+     * @param logger The logger to use, if null, a new logger will be created
+     * @return The logger to use
+     */
+    private Logger getLogger(@Nullable Logger logger) {
+        return (logger == null) ? LoggerFactory.getLogger(this.getName())
+                : LoggerFactory.getLogger(logger.getName() + "-" + this.getName());
     }
 
     /**
@@ -48,23 +60,17 @@ public class ClientSocketHandler extends Thread {
     public void run() {
         try {
             logger.info("Client-{} connected on port {}", clientId, clientSocket.getPort());
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(clientSocket.getInputStream()));
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
             boolean continueListening = true;
 
             while (continueListening) {
-                continueListening = serverLogic.processRequest(in, out, clientId, logger);
+                continueListening = clientConnection.processRequest(logger);
                 logger.debug("The server should continue listening: {}", continueListening);
             }
 
-            in.close();
-            out.close();
-            clientSocket.close();
+            clientConnection.close();
+            logger.info("Client-{} disconnected", clientId);
         } catch (IOException e) {
-            logger.error("Exception caught when trying to listen on port "
-                    + clientSocket.getPort() + " or listening for a connection", e);
+            logger.error("Exception caught when trying to listen on port {} or listening for a connection", clientSocket.getPort(), e);
         }
     }
 

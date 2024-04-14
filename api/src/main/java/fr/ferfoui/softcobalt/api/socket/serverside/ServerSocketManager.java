@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,40 +22,56 @@ public class ServerSocketManager {
     private final Logger logger;
 
     private ServerSocket serverSocket;
-    private boolean running;
+    private boolean doContinueAccept;
     private final ArrayList<ClientSocketHandler> clientHandlers = new ArrayList<>();
+
+    ClientConnectionProvider clientConnectionProvider;
 
     /**
      * Constructor for the ServerSocketManager
      *
      * @param name The name of the logger to use
      */
-    public ServerSocketManager(String name) {
+    public ServerSocketManager(String name, ClientConnectionProvider clientConnectionProvider) {
         logger = LoggerFactory.getLogger(name);
+        this.clientConnectionProvider = clientConnectionProvider;
     }
 
     /**
      * Start the server on the given port
      *
      * @param port The port to start the server on
-     * @param serverLogic The logic to process the requests
      * @throws IOException If the server socket cannot be created
      */
-    public void start(int port, RequestProcessor serverLogic) throws IOException {
+    public void start(int port) throws IOException {
         logger.info("Starting server on port: {}", port);
         serverSocket = new ServerSocket(port);
-        running = true;
+        acceptConnections();
+    }
+
+    private void acceptConnections() throws IOException {
+        doContinueAccept = true;
+
         int clientId = 0;
-        while (running) {
+        while (doContinueAccept) {
             try {
-                ClientSocketHandler clientHandler = new ClientSocketHandler(serverSocket.accept(), serverLogic, clientId, null);
+                Socket connectionSocket = serverSocket.accept();
+                logger.info("Accepted connection from: {}", connectionSocket.getInetAddress());
+
+                ClientSocketHandler clientHandler = new ClientSocketHandler(
+                        connectionSocket,
+                        getNewClientConnection(connectionSocket, clientId),
+                        clientId, null);
+
                 clientHandler.start();
                 clientHandlers.add(clientHandler);
                 clientId++;
             } catch (SocketException e) {
                 // The Socket was closed while accept() was waiting, break the loop
-                if (!running) {
+                if (!doContinueAccept) {
                     break;
+                } else {
+                    logger.error("An error occurred while accepting a connection", e);
                 }
             }
         }
@@ -75,7 +93,7 @@ public class ServerSocketManager {
      */
     public void stop() throws IOException {
         logger.info("Shutting down Socket server");
-        running = false;
+        doContinueAccept = false;
         stopClientHandlers();
         serverSocket.close();
     }
@@ -92,5 +110,9 @@ public class ServerSocketManager {
             clientHandler.interrupt();
             iterator.remove();
         }
+    }
+
+    public ClientConnection getNewClientConnection(Socket socket, int clientId) {
+        return clientConnectionProvider.getNewClientConnection(socket, clientId);
     }
 }

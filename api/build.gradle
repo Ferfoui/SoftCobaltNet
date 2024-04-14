@@ -17,6 +17,7 @@ dependencies {
     testImplementation libs.junit.jupiter
 
     implementation(libs.slog4j.api)
+    testImplementation(libs.slog4j.simple)
 }
 
 test {

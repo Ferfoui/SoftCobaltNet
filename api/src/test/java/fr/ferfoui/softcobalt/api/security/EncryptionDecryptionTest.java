@@ -30,9 +30,9 @@ public class EncryptionDecryptionTest {
         Key publicKey = keysManager.getPublicKey();
         Key privateKey = keysManager.getPrivateKey();
 
-        // Encrypt the text with the public key and decrypt it with the private key
-        byte[] encrypted = EncryptDecryptCipher.encrypt(SAMPLE_TEXT, publicKey, ALGORITHM);
-        String decrypted = EncryptDecryptCipher.decrypt(encrypted, privateKey, ALGORITHM);
+        // Encrypt the text with the public key and decryptToString it with the private key
+        byte[] encrypted = EncryptDecryptCipher.encryptString(SAMPLE_TEXT, publicKey, ALGORITHM);
+        String decrypted = EncryptDecryptCipher.decryptToString(encrypted, privateKey, ALGORITHM);
 
         assertEquals(SAMPLE_TEXT, decrypted);
     }
@@ -46,8 +46,8 @@ public class EncryptionDecryptionTest {
         Key publicKey = keysManager.getPublicKey();
         Key privateKey = keysManager.getPrivateKey();
 
-        byte[] encrypted = EncryptDecryptCipher.encrypt(SAMPLE_TEXT, privateKey, ALGORITHM);
-        String decrypted = EncryptDecryptCipher.decrypt(encrypted, publicKey, ALGORITHM);
+        byte[] encrypted = EncryptDecryptCipher.encryptString(SAMPLE_TEXT, privateKey, ALGORITHM);
+        String decrypted = EncryptDecryptCipher.decryptToString(encrypted, publicKey, ALGORITHM);
 
         assertEquals(SAMPLE_TEXT, decrypted);
     }
@@ -63,13 +63,13 @@ public class EncryptionDecryptionTest {
         keysManager2.generateKeys();
         Key privateKey2 = keysManager2.getPrivateKey();
 
-        byte[] encrypted = EncryptDecryptCipher.encrypt(SAMPLE_TEXT, publicKey1, ALGORITHM);
+        byte[] encrypted = EncryptDecryptCipher.encryptString(SAMPLE_TEXT, publicKey1, ALGORITHM);
 
         String decrypted;
 
-        // Try to decrypt with the incorrect private key
+        // Try to decryptToString with the incorrect private key
         try {
-            decrypted = EncryptDecryptCipher.decrypt(encrypted, privateKey2, ALGORITHM);
+            decrypted = EncryptDecryptCipher.decryptToString(encrypted, privateKey2, ALGORITHM);
         } catch (BadPaddingException e) {
             return;
         }
@@ -88,13 +88,13 @@ public class EncryptionDecryptionTest {
         keysManager2.generateKeys();
         Key publicKey2 = keysManager2.getPublicKey();
 
-        byte[] encrypted = EncryptDecryptCipher.encrypt(SAMPLE_TEXT, privateKey1, ALGORITHM);
+        byte[] encrypted = EncryptDecryptCipher.encryptString(SAMPLE_TEXT, privateKey1, ALGORITHM);
 
         String decrypted;
 
-        // Try to decrypt with the incorrect public key
+        // Try to decryptToString with the incorrect public key
         try {
-            decrypted = EncryptDecryptCipher.decrypt(encrypted, publicKey2, ALGORITHM);
+            decrypted = EncryptDecryptCipher.decryptToString(encrypted, publicKey2, ALGORITHM);
         } catch (BadPaddingException e) {
             return;
         }

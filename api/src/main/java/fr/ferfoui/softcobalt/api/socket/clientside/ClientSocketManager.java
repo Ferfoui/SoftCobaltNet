@@ -15,8 +15,8 @@ import java.net.Socket;
  */
 public class ClientSocketManager {
     private Socket server;
-    private PrintWriter out;
-    private BufferedReader in;
+    private DataInputStream in;
+    private DataOutputStream out;
     private final Logger logger;
 
     public ClientSocketManager(@Nullable Logger logger) {
@@ -33,8 +33,8 @@ public class ClientSocketManager {
     public void startConnection(String ip, int port) throws IOException {
         logger.info("Starting connection to {}:{}", ip, port);
         server = new Socket(ip, port);
-        out = new PrintWriter(server.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(server.getInputStream()));
+        in = new DataInputStream(new BufferedInputStream(server.getInputStream()));
+        out = new DataOutputStream(server.getOutputStream());
     }
 
     /**
@@ -45,8 +45,8 @@ public class ClientSocketManager {
      */
     public String sendMessage(String msg) throws IOException {
         logger.info("Sending message: {}", msg);
-        out.println(msg);
-        return in.readLine();
+        out.writeUTF(msg);
+        return in.readUTF();
     }
 
     /**

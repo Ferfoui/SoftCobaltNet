@@ -25,7 +25,7 @@ public class KeyFileReader {
      * Reads a public key from a file.
      *
      * @param publicKeyFile the file containing the public key
-     * @param algorithm the algorithm used to generate the key (e.g. "RSA/ECB/PKCS1Padding")
+     * @param algorithm the algorithm used to generate the key (for example, "RSA")
      * @return the public key
      * @throws IOException if an I/O error occurs
      * @throws NoSuchAlgorithmException if the algorithm is not available
@@ -44,7 +44,7 @@ public class KeyFileReader {
      * Reads a private key from a file.
      *
      * @param privateKeyFile the file containing the private key
-     * @param algorithm the algorithm used to generate the key (e.g. "RSA/ECB/PKCS1Padding")
+     * @param algorithm the algorithm used to generate the key (for example, "RSA")
      * @return the private key
      * @throws IOException if an I/O error occurs
      * @throws NoSuchAlgorithmException if the algorithm is not available

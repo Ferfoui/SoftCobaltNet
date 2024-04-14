@@ -27,7 +27,7 @@ public class RequestFormattingTest {
         Key publicKey = keysManager.getPublicKey();
         Key privateKey = keysManager.getPrivateKey();
 
-        // Encrypt the text with the public key and decrypt it with the private key
+        // Encrypt the text with the public key and decryptToString it with the private key
         String encoded = RequestFormatting.encryptAndEncode(SAMPLE_TEXT, publicKey, ALGORITHM);
         String decoded = RequestFormatting.decodeAndDecrypt(encoded, privateKey, ALGORITHM);
 
