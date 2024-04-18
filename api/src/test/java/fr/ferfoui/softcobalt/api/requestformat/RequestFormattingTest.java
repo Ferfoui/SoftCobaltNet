@@ -28,7 +28,7 @@ public class RequestFormattingTest {
         Key privateKey = keysManager.getPrivateKey();
 
         // Encrypt the text with the public key and decryptToString it with the private key
-        String encoded = RequestFormatting.encryptAndEncode(SAMPLE_TEXT, publicKey, ALGORITHM);
+        String encoded = RequestFormatting.encryptAndEncodeToString(SAMPLE_TEXT, publicKey, ALGORITHM);
         String decoded = RequestFormatting.decodeAndDecrypt(encoded, privateKey, ALGORITHM);
 
         assertEquals(SAMPLE_TEXT, decoded);
@@ -43,7 +43,7 @@ public class RequestFormattingTest {
         Key publicKey = keysManager.getPublicKey();
         Key privateKey = keysManager.getPrivateKey();
 
-        String encoded = RequestFormatting.encryptAndEncode(SAMPLE_TEXT, privateKey, ALGORITHM);
+        String encoded = RequestFormatting.encryptAndEncodeToString(SAMPLE_TEXT, privateKey, ALGORITHM);
         String decoded = RequestFormatting.decodeAndDecrypt(encoded, publicKey, ALGORITHM);
 
         assertEquals(SAMPLE_TEXT, decoded);

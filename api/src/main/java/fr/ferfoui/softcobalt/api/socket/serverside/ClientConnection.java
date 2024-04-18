@@ -32,10 +32,24 @@ public abstract class ClientConnection implements RequestProcessor {
         }
     }
 
-    public void sendBytes(byte[] bytesToSend) throws IOException {
-        out.writeInt(bytesToSend.length);
+    /**
+     * Receive bytes from the client
+     * @return The bytes received
+     * @throws IOException If the bytes cannot be received
+     */
+    protected byte[] readBytes() throws IOException {
+        byte[] bytesReceived = new byte[in.available()];
+        in.readFully(bytesReceived);
+        return bytesReceived;
+    }
+
+    /**
+     * Send bytes to the client
+     * @param bytesToSend The bytes to send
+     * @throws IOException If the bytes cannot be sent
+     */
+    protected void sendBytes(byte[] bytesToSend) throws IOException {
         out.write(bytesToSend);
-        out.flush();
     }
 
     /**

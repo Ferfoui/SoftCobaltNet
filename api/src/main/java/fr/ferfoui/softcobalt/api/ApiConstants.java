@@ -14,4 +14,22 @@ public class ApiConstants {
     public static class SecurityConstants {
         public static final String RSA_ALGORITHM = "RSA";
     }
+
+    /**
+     * Constants related to the request format
+     */
+    public static class RequestFormatConstants {
+        public static final String REQUEST_SPLITTER = ":::";
+        public static final String KEYWORD_SPLITTER = "|";
+        public static final String KEYWORD_SUB_SPLITTER = "_";
+
+        public static final String HEADER_PREFIX = "start_header" + REQUEST_SPLITTER;
+        public static final String HEADER_SUFFIX = REQUEST_SPLITTER + "end_header";
+        public static final int HEADER_PREFIX_SUFFIX_SIZE = HEADER_PREFIX.length() + HEADER_SUFFIX.length();
+
+        public static final String PUBLIC_KEY_PREFIX = "public_key" + REQUEST_SPLITTER;
+        public static final String PUBLIC_KEY_SUFFIX = REQUEST_SPLITTER + "end_public_key";
+
+        public static final String FILENAME_KEYWORD = "filename";
+    }
 }

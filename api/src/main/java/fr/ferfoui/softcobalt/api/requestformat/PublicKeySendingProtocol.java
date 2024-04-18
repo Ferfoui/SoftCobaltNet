@@ -1,5 +1,6 @@
 package fr.ferfoui.softcobalt.api.requestformat;
 
+import fr.ferfoui.softcobalt.api.ApiConstants;
 import org.jetbrains.annotations.NotNull;
 
 import java.security.KeyFactory;
@@ -17,10 +18,10 @@ import java.util.Base64;
  * @since 1.0
  */
 public class PublicKeySendingProtocol {
-    public static final String PUBLIC_KEY_SPLITTER = ":::";
+    public static final String PUBLIC_KEY_SPLITTER = ApiConstants.RequestFormatConstants.REQUEST_SPLITTER;
 
-    public static final String PUBLIC_KEY_PREFIX = "public_key" + PUBLIC_KEY_SPLITTER;
-    public static final String PUBLIC_KEY_SUFFIX = PUBLIC_KEY_SPLITTER + "end_public_key";
+    public static final String PUBLIC_KEY_PREFIX = ApiConstants.RequestFormatConstants.PUBLIC_KEY_PREFIX;
+    public static final String PUBLIC_KEY_SUFFIX = ApiConstants.RequestFormatConstants.PUBLIC_KEY_SUFFIX;
 
     /**
      * Creates a public key message from a public key.

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Class used to manage the client socket connection.
@@ -47,6 +48,28 @@ public class ClientSocketManager {
         logger.info("Sending message: {}", msg);
         out.writeUTF(msg);
         return in.readUTF();
+    }
+
+    /**
+     * Send bytes to the server
+     * @param bytesToSend The bytes to send
+     * @throws IOException If the bytes cannot be sent
+     */
+    public void sendBytes(byte[] bytesToSend) throws IOException {
+        logger.info("Sending bytes: {}", new String(bytesToSend, StandardCharsets.UTF_8));
+        out.write(bytesToSend);
+    }
+
+    /**
+     * Receive bytes from the server
+     * @return The bytes received
+     * @throws IOException If the bytes cannot be received
+     */
+    public byte[] readBytes() throws IOException {
+        byte[] bytesReceived = new byte[in.available()];
+        in.readFully(bytesReceived);
+        logger.info("Received bytes: {}", new String(bytesReceived, StandardCharsets.UTF_8));
+        return bytesReceived;
     }
 
     /**

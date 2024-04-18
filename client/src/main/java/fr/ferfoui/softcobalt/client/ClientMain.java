@@ -9,8 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -42,7 +40,7 @@ public class ClientMain {
             if (publicKey == null) {
                 response = clientSocketManager.sendMessage("Hello from client " + i);
             } else {
-                String encryptedMessage = RequestFormatting.encryptAndEncode("Hello from client " + i, publicKey, "RSA");
+                String encryptedMessage = RequestFormatting.encryptAndEncodeToString("Hello from client " + i, publicKey, "RSA");
 
                 response = clientSocketManager.sendMessage(encryptedMessage);
             }
@@ -51,7 +49,7 @@ public class ClientMain {
                 try {
                     publicKey = decodePublicKeyInResponse(response);
 
-                    String encryptedMessage = RequestFormatting.encryptAndEncode("First encrypted message with this key", publicKey, "RSA");
+                    String encryptedMessage = RequestFormatting.encryptAndEncodeToString("First encrypted message with this key", publicKey, "RSA");
 
                     response = clientSocketManager.sendMessage(encryptedMessage);
 
@@ -67,7 +65,7 @@ public class ClientMain {
             logger.info("Received response: {}", response);
         }
 
-        String encryptedMessage = RequestFormatting.encryptAndEncode("exit", publicKey, "RSA");
+        String encryptedMessage = RequestFormatting.encryptAndEncodeToString("exit", publicKey, "RSA");
 
         clientSocketManager.sendMessage(encryptedMessage);
     }

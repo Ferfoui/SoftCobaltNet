@@ -7,17 +7,14 @@ import fr.ferfoui.softcobalt.api.security.key.AsymmetricKeysManager;
 import fr.ferfoui.softcobalt.api.security.key.RsaKeysManager;
 import fr.ferfoui.softcobalt.api.socket.serverside.ClientConnection;
 import fr.ferfoui.softcobalt.api.socket.serverside.ClientSocketHandler;
-import fr.ferfoui.softcobalt.api.socket.serverside.RequestProcessor;
 import fr.ferfoui.softcobalt.api.socket.serverside.ServerSocketManager;
 import fr.ferfoui.softcobalt.common.Constants;
 import fr.ferfoui.softcobalt.common.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
@@ -107,7 +104,7 @@ public class SocketServerThread extends Thread {
 
                     logger.info("Decoded request: {}", decryptedRequest);
 
-                    String encryptedResponse = RequestFormatting.encryptAndEncode("Server response for: '" + decryptedRequest + "'", rsaKeysManager.getPrivateKey(), ApiConstants.SecurityConstants.RSA_ALGORITHM);
+                    String encryptedResponse = RequestFormatting.encryptAndEncodeToString("Server response for: '" + decryptedRequest + "'", rsaKeysManager.getPrivateKey(), ApiConstants.SecurityConstants.RSA_ALGORITHM);
                     logger.info("Sending encrypted response: {}", encryptedResponse);
                     out.writeUTF(encryptedResponse);
                     request = decryptedRequest;

@@ -2,6 +2,7 @@ package fr.ferfoui.softcobalt.api.requestformat;
 
 import fr.ferfoui.softcobalt.api.security.EncryptDecryptCipher;
 
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.util.Base64;
@@ -15,6 +16,7 @@ import java.util.Base64;
  * @author Ferfoui
  * @since 1.0
  */
+@Deprecated(forRemoval = true)
 public class RequestFormatting {
 
     /**
@@ -22,14 +24,14 @@ public class RequestFormatting {
      *
      * @param clearMessage the message to encryptString and encode
      * @param key the key to use for encryption
-     * @param algorithm the algorithm to use for encryption (e.g. "RSA/ECB/PKCS1Padding")
+     * @param algorithm the algorithm to use for encryption (for example, "RSA")
      * @return the encrypted and encoded message
      * @throws GeneralSecurityException if a security error occurs like an invalid key or algorithm
      */
-    public static String encryptAndEncode(String clearMessage, Key key, String algorithm) throws GeneralSecurityException {
+    public static String encryptAndEncodeToString(String clearMessage, Key key, String algorithm) throws GeneralSecurityException {
         byte[] encryptedMessage = EncryptDecryptCipher.encryptString(clearMessage, key, algorithm);
 
-        return encode(encryptedMessage);
+        return new String(encode(encryptedMessage), StandardCharsets.ISO_8859_1);
     }
 
     /**
@@ -37,7 +39,7 @@ public class RequestFormatting {
      *
      * @param encryptedMessage the message to decode and decryptToString
      * @param key the key to use for decryption
-     * @param algorithm the algorithm to use for decryption (e.g. "RSA/ECB/PKCS1Padding")
+     * @param algorithm the algorithm to use for decryption (for example, "RSA")
      * @return the decrypted message
      * @throws GeneralSecurityException if a security error occurs like an invalid key or algorithm
      */
@@ -53,8 +55,8 @@ public class RequestFormatting {
      * @param bytesToEncode the bytes to encode
      * @return the encoded bytes
      */
-    private static String encode(byte[] bytesToEncode) {
-        return Base64.getEncoder().encodeToString(bytesToEncode);
+    private static byte[] encode(byte[] bytesToEncode) {
+        return Base64.getEncoder().encode(bytesToEncode);
     }
 
     /**
