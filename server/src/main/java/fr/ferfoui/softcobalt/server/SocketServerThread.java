@@ -1,7 +1,7 @@
 package fr.ferfoui.softcobalt.server;
 
 import fr.ferfoui.softcobalt.api.ApiConstants;
-import fr.ferfoui.softcobalt.api.requestformat.PublicKeySendingProtocol;
+import fr.ferfoui.softcobalt.api.requestformat.PublicKeySendingUtils;
 import fr.ferfoui.softcobalt.api.requestformat.RequestFormatting;
 import fr.ferfoui.softcobalt.api.security.key.AsymmetricKeysManager;
 import fr.ferfoui.softcobalt.api.security.key.RsaKeysManager;
@@ -123,7 +123,7 @@ public class SocketServerThread extends Thread {
         }
 
         private void sendPublicKey() throws IOException {
-            out.writeUTF(PublicKeySendingProtocol.createPublicKeyMessage(rsaKeysManager.getPublicKey()));
+            out.writeUTF(PublicKeySendingUtils.createPublicKeyMessage(rsaKeysManager.getPublicKey()));
         }
     }
 }

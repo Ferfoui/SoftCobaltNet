@@ -1,6 +1,6 @@
 package fr.ferfoui.softcobalt.client;
 
-import fr.ferfoui.softcobalt.api.requestformat.PublicKeySendingProtocol;
+import fr.ferfoui.softcobalt.api.requestformat.PublicKeySendingUtils;
 import fr.ferfoui.softcobalt.api.requestformat.RequestFormatting;
 import fr.ferfoui.softcobalt.api.socket.clientside.ClientSocketManager;
 import fr.ferfoui.softcobalt.common.Constants;
@@ -45,7 +45,7 @@ public class ClientMain {
                 response = clientSocketManager.sendMessage(encryptedMessage);
             }
 
-            if (PublicKeySendingProtocol.isPublicKeyMessage(response)) {
+            if (PublicKeySendingUtils.isPublicKeyMessage(response)) {
                 try {
                     publicKey = decodePublicKeyInResponse(response);
 
@@ -71,7 +71,7 @@ public class ClientMain {
     }
 
     private static PublicKey decodePublicKeyInResponse(String requestWithPublicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        PublicKey publicKey = PublicKeySendingProtocol.decodeReceivedPublicKey(requestWithPublicKey, "RSA");
+        PublicKey publicKey = PublicKeySendingUtils.decodeReceivedStringPublicKey(requestWithPublicKey, "RSA");
 
         logger.info("Received public key: {}", publicKey);
 

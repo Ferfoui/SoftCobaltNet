@@ -23,24 +23,24 @@ public class PublicKeySendingTest {
     }
 
     @Test
-    public void testEncodeDecodePublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public void testEncodeDecodeRSAPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
         var keysManager = getKeysManager();
         keysManager.generateKeys();
 
         PublicKey publicKey = keysManager.getPublicKey();
 
-        String publicKeyMessage = PublicKeySendingProtocol.createPublicKeyMessage(publicKey);
-        PublicKey decodedPublicKey = PublicKeySendingProtocol.decodeReceivedPublicKey(publicKeyMessage, ALGORITHM);
+        byte[] encodedPublicKey = PublicKeySendingUtils.publicKeyToBytes(publicKey);
+        PublicKey decodedPublicKey = PublicKeySendingUtils.decodeReceivedPublicKey(encodedPublicKey, ALGORITHM);
 
         assertEquals(publicKey, decodedPublicKey);
     }
 
     @Test
-    public void testDecodeNonPublicKeyMessage() throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public void testDecodeNonPublicKey() throws NoSuchAlgorithmException {
         try {
-            PublicKeySendingProtocol.decodeReceivedPublicKey(SAMPLE_TEXT, ALGORITHM);
-            fail("The program didn't send error after trying to decode a non public key message");
-        } catch (IllegalArgumentException ignored) {
+            PublicKeySendingUtils.decodeReceivedPublicKey(SAMPLE_TEXT.getBytes(), ALGORITHM);
+            fail("The program didn't send error after trying to decode a non public key");
+        } catch (InvalidKeySpecException ignored) {
             // It is working right
         }
     }

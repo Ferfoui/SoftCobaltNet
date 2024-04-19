@@ -21,7 +21,7 @@ public class ApiConstants {
     public static class RequestFormatConstants {
         public static final String REQUEST_SPLITTER = ":::";
         public static final String KEYWORD_SPLITTER = "|";
-        public static final String KEYWORD_SUB_SPLITTER = "_";
+        public static final String KEYWORD_SUB_SPLITTER = "-";
 
         public static final String HEADER_PREFIX = "start_header" + REQUEST_SPLITTER;
         public static final String HEADER_SUFFIX = REQUEST_SPLITTER + "end_header";
@@ -31,5 +31,6 @@ public class ApiConstants {
         public static final String PUBLIC_KEY_SUFFIX = REQUEST_SPLITTER + "end_public_key";
 
         public static final String FILENAME_KEYWORD = "filename";
+        public static final String KEY_ALGORITHM_KEYWORD = "key_algorithm";
     }
 }
