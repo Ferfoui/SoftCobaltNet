@@ -31,7 +31,7 @@ public class Header {
      * @param headerBytes The byte array containing the header.
      */
     public Header(byte[] headerBytes) {
-        String headerContent = HeaderFormatProtocol.extractHeader(headerBytes);
+        String headerContent = HeaderFormatUtils.extractHeader(headerBytes);
 
         String[] headerContentSplit = headerContent.split(RequestFormatConstants.KEYWORD_SUB_SPLITTER);
         this.headerKeyword = headerContentSplit[0];
@@ -65,11 +65,15 @@ public class Header {
     }
 
     public byte[] getHeaderBytes() {
-        return HeaderFormatProtocol.createHeader(fullHeaderContent);
+        return HeaderFormatUtils.createHeader(fullHeaderContent);
     }
 
     public String getHeaderString() {
         return fullHeaderContent;
+    }
+
+    public String getPrincipalKeyword() {
+        return headerKeyword;
     }
 
     public List<String> getSecondaryKeywords() {

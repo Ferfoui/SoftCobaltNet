@@ -3,7 +3,7 @@ package fr.ferfoui.softcobalt.api.socket.serverside;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -19,17 +19,16 @@ import java.util.Iterator;
 public class ServerSocketManager {
 
     private final Logger logger;
-
+    private final ArrayList<ClientSocketHandler> clientHandlers = new ArrayList<>();
+    ClientConnectionProvider clientConnectionProvider;
     private ServerSocket serverSocket;
     private boolean doContinueAccept;
-    private final ArrayList<ClientSocketHandler> clientHandlers = new ArrayList<>();
-
-    ClientConnectionProvider clientConnectionProvider;
 
     /**
      * Constructor for the ServerSocketManager
      *
-     * @param name The name of the logger to use
+     * @param name                     The name of the logger to use
+     * @param clientConnectionProvider The client connection provider to use. This is used to create a new client connection
      */
     public ServerSocketManager(String name, ClientConnectionProvider clientConnectionProvider) {
         logger = LoggerFactory.getLogger(name);
@@ -48,10 +47,15 @@ public class ServerSocketManager {
         acceptConnections();
     }
 
+    /**
+     * Accept connections from clients
+     *
+     * @throws IOException If an error occurs while accepting a connection
+     */
     private void acceptConnections() throws IOException {
         doContinueAccept = true;
 
-        int clientId = 0;
+        long clientId = 0;
         while (doContinueAccept) {
             try {
                 Socket connectionSocket = serverSocket.accept();
@@ -111,7 +115,25 @@ public class ServerSocketManager {
         }
     }
 
-    public ClientConnection getNewClientConnection(Socket socket, int clientId) {
+    /**
+     * Join all client handlers
+     *
+     * @throws InterruptedException If the thread is interrupted while joining
+     */
+    public synchronized void joinClientHandlers() throws InterruptedException {
+        for (ClientSocketHandler clientHandler : clientHandlers) {
+            clientHandler.join();
+        }
+    }
+
+    /**
+     * Get a new client connection
+     *
+     * @param socket   The socket to use
+     * @param clientId The client id
+     * @return The new client connection
+     */
+    public ClientConnection getNewClientConnection(Socket socket, long clientId) {
         return clientConnectionProvider.getNewClientConnection(socket, clientId);
     }
 }

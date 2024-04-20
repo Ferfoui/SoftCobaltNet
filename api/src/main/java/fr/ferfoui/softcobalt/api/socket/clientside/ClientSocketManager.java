@@ -44,6 +44,7 @@ public class ClientSocketManager {
      * @return The response from the server
      * @throws IOException If the message cannot be sent
      */
+    @Deprecated
     public String sendMessage(String msg) throws IOException {
         logger.info("Sending message: {}", msg);
         out.writeUTF(msg);

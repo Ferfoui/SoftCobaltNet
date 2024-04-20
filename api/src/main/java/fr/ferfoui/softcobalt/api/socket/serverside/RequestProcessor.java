@@ -3,6 +3,7 @@ package fr.ferfoui.softcobalt.api.socket.serverside;
 import org.slf4j.Logger;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
@@ -16,6 +17,14 @@ import java.io.PrintWriter;
  * @since 1.0
  */
 public interface RequestProcessor {
+
+    /**
+     * Initialize the data streams to use
+     *
+     * @throws IOException If the data streams cannot be initialized
+     */
+    void initializeDataStreams() throws IOException;
+
     /**
      * Process the request and return true if the server should continue listening for requests
      * @param logger the logger to use

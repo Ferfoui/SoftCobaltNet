@@ -1,5 +1,6 @@
 package fr.ferfoui.softcobalt.api.socket.serverside;
 
+import fr.ferfoui.softcobalt.api.requestformat.datasending.DataFormatter;
 import fr.ferfoui.softcobalt.api.socket.clientside.ClientSocketManager;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,8 @@ public class ServerSocketManagerTest {
             try {
                 ServerSocketManager serverSocketManager = new ServerSocketManager("server-socket", SampleClientConnection::new);
                 serverSocketManager.start(PORT);
-            } catch (IOException e) {
+                serverSocketManager.joinClientHandlers();
+            } catch (IOException | InterruptedException e) {
                 throw new RuntimeException("Failed to start server", e);
             }
         });
@@ -35,7 +37,11 @@ public class ServerSocketManagerTest {
 
         ClientSocketManager client = startAClient();
 
-        client.sendMessage("exit");
+        DataFormatter formatter = new DataFormatter();
+        byte[] bytesToSend = formatter.createStringRequest("Hello, server!");
+        client.sendBytes(bytesToSend);
+
+
     }
 
 }

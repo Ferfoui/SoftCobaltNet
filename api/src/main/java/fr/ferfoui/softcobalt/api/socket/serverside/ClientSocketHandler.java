@@ -4,11 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 
 /**
@@ -23,18 +19,20 @@ import java.net.Socket;
 public class ClientSocketHandler extends Thread {
     private final Socket clientSocket;
     private final ClientConnection clientConnection;
-    private final int clientId;
+    private final long clientId;
     private final Logger logger;
+
+    private boolean doContinueListening = false;
 
     /**
      * Constructor for the ClientSocketHandler
      *
-     * @param socket The socket to handle
+     * @param socket           The socket to handle
      * @param clientConnection The client connection to use
-     * @param clientId The id of the client
-     * @param logger The logger to use, if null, a new logger will be created
+     * @param clientId         The id of the client
+     * @param logger           The logger to use, if null, a new logger will be created
      */
-    public ClientSocketHandler(Socket socket, ClientConnection clientConnection, int clientId, @Nullable Logger logger) {
+    public ClientSocketHandler(Socket socket, ClientConnection clientConnection, long clientId, @Nullable Logger logger) {
         super("client-socket-handler-" + clientId);
         this.clientSocket = socket;
         this.clientId = clientId;
@@ -60,11 +58,12 @@ public class ClientSocketHandler extends Thread {
     public void run() {
         try {
             logger.info("Client-{} connected on port {}", clientId, clientSocket.getPort());
-            boolean continueListening = true;
+            clientConnection.initializeDataStreams();
+            doContinueListening = true;
 
-            while (continueListening) {
-                continueListening = clientConnection.processRequest(logger);
-                logger.debug("The server should continue listening: {}", continueListening);
+            while (doContinueListening) {
+                doContinueListening = clientConnection.processRequest(logger);
+                logger.debug("The server should continue listening: {}", doContinueListening);
             }
 
             clientConnection.close();
@@ -72,6 +71,13 @@ public class ClientSocketHandler extends Thread {
         } catch (IOException e) {
             logger.error("Exception caught when trying to listen on port {} or listening for a connection", clientSocket.getPort(), e);
         }
+    }
+
+    /**
+     * Stop the client socket handler
+     */
+    public void stopHandler() {
+        doContinueListening = false;
     }
 
     /**

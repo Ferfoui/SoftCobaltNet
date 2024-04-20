@@ -4,7 +4,7 @@ import fr.ferfoui.softcobalt.api.ApiConstants;
 
 import java.nio.charset.StandardCharsets;
 
-public class HeaderFormatProtocol {
+public class HeaderFormatUtils {
 
     private static final String HEADER_PREFIX = ApiConstants.RequestFormatConstants.HEADER_PREFIX;
     private static final String HEADER_SUFFIX = ApiConstants.RequestFormatConstants.HEADER_SUFFIX;

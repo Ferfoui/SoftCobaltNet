@@ -2,8 +2,20 @@ package fr.ferfoui.softcobalt.api.socket.serverside;
 
 import java.net.Socket;
 
+/**
+ * Interface used to provide a new client connection
+ * <p>
+ * This is used to create a new client connection when a client connects to the server
+ */
 public interface ClientConnectionProvider {
 
-    ClientConnection getNewClientConnection(Socket socket, int clientId);
+    /**
+     * Get a new client connection
+     *
+     * @param socket   The socket of the client
+     * @param clientId The id of the client
+     * @return The new client connection
+     */
+    ClientConnection getNewClientConnection(Socket socket, long clientId);
 
 }
