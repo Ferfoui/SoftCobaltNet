@@ -1,5 +1,6 @@
 package fr.ferfoui.softcobalt.api.socket.clientside;
 
+import fr.ferfoui.softcobalt.api.socket.DataSocketManager;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Class used to manage the client socket connection.
@@ -14,14 +17,25 @@ import java.nio.charset.StandardCharsets;
  * @author Ferfoui
  * @since 1.0
  */
-public class ClientSocketManager {
-    private Socket server;
+public class ClientSocketManager extends DataSocketManager {
+
     private DataInputStream in;
     private DataOutputStream out;
-    private final Logger logger;
+
+    private final Thread queueHandlerThread = new Thread(getQueueHandlerRunnable());
 
     public ClientSocketManager(@Nullable Logger logger) {
-        this.logger = (logger == null) ?
+        super(null, logger);
+    }
+
+    /**
+     * This method is returning the logger to use.
+     * @param logger The logger to use, if null, a new logger will be created
+     * @return The logger to use
+     */
+    @Override
+    protected Logger getLogger(@Nullable Logger logger) {
+        return (logger == null) ?
                 LoggerFactory.getLogger("client-socket-manager") : logger;
     }
 
@@ -33,9 +47,10 @@ public class ClientSocketManager {
      */
     public void startConnection(String ip, int port) throws IOException {
         logger.info("Starting connection to {}:{}", ip, port);
-        server = new Socket(ip, port);
-        in = new DataInputStream(new BufferedInputStream(server.getInputStream()));
-        out = new DataOutputStream(server.getOutputStream());
+        socket = new Socket(ip, port);
+        queueHandlerThread.start();
+        in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+        out = new DataOutputStream(socket.getOutputStream());
     }
 
     /**
@@ -79,8 +94,9 @@ public class ClientSocketManager {
      */
     public void stopConnection() throws IOException {
         logger.info("Stopping connection");
+        queueHandlerThread.interrupt();
         in.close();
         out.close();
-        server.close();
+        socket.close();
     }
 }

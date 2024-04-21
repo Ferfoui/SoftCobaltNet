@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.net.Socket;
 
-public class SampleClientConnection extends ClientConnection {
+public class SampleStringClientConnection extends ClientConnection {
     public static final String EXIT_COMMAND = "exit";
 
     private final DataFormatter formatter;
@@ -18,7 +18,7 @@ public class SampleClientConnection extends ClientConnection {
      * @param socket   The socket to handle
      * @param clientId The id of the client
      */
-    public SampleClientConnection(Socket socket, long clientId) {
+    public SampleStringClientConnection(Socket socket, long clientId) {
         super(socket, clientId);
         formatter = new DataFormatter();
     }
@@ -30,14 +30,14 @@ public class SampleClientConnection extends ClientConnection {
      * @return true if the server should continue listening for requests
      */
     @Override
-    public boolean processRequest(Logger logger) {
+    public boolean processRequest(byte[] availableBytes, Logger logger) {
         String body;
+        logger.info("Processing request from client-{}", clientId);
         try {
-            byte[] bytesReceived = readBytes();
-            if (bytesReceived.length == 0) {
+            if (availableBytes.length == 0) {
                 return true;
             }
-            DataReader reader = new DataReader(bytesReceived);
+            DataReader reader = new DataReader(availableBytes);
             body = readStringBody(reader);
             logger.info("Received request: {}", body);
 

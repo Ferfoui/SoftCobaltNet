@@ -20,14 +20,17 @@ public class RsaKeysManager implements AsymmetricKeysManager {
     /**
      * Generate a new pair of RSA keys
      *
-     * @throws NoSuchAlgorithmException If the algorithm is not found
      * @since 1.0
      */
     @Override
-    public void generateKeys() throws NoSuchAlgorithmException {
-        KeyPairGenerator generator = KeyPairGenerator.getInstance(SecurityConstants.RSA_ALGORITHM);
-        generator.initialize(2048);
-        keyPair = generator.generateKeyPair();
+    public void generateKeys() {
+        try {
+            KeyPairGenerator generator = KeyPairGenerator.getInstance(SecurityConstants.RSA_ALGORITHM);
+            generator.initialize(2048);
+            keyPair = generator.generateKeyPair();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("RSA algorithm not found", e);
+        }
     }
 
     /**
@@ -74,6 +77,11 @@ public class RsaKeysManager implements AsymmetricKeysManager {
     @Override
     public PrivateKey getPrivateKey() {
         return keyPair.getPrivate();
+    }
+
+    @Override
+    public String getAlgorithm() {
+        return SecurityConstants.RSA_ALGORITHM;
     }
 
     @Override

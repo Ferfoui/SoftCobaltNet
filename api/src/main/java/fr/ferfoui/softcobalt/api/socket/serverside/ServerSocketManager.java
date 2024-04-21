@@ -1,5 +1,6 @@
 package fr.ferfoui.softcobalt.api.socket.serverside;
 
+import fr.ferfoui.softcobalt.api.socket.serverside.thread.ServerThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,8 +8,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Class used to manage the server socket connection.
@@ -18,9 +19,10 @@ import java.util.Iterator;
  */
 public class ServerSocketManager {
 
+    private final ExecutorService clientHandlersExecutor = Executors.newCachedThreadPool(new ServerThreadFactory());
+
     private final Logger logger;
-    private final ArrayList<ClientSocketHandler> clientHandlers = new ArrayList<>();
-    ClientConnectionProvider clientConnectionProvider;
+    private final ClientConnectionProvider clientConnectionProvider;
     private ServerSocket serverSocket;
     private boolean doContinueAccept;
 
@@ -41,7 +43,7 @@ public class ServerSocketManager {
      * @param port The port to start the server on
      * @throws IOException If the server socket cannot be created
      */
-    public void start(int port) throws IOException {
+    public synchronized void start(int port) throws IOException {
         logger.info("Starting server on port: {}", port);
         serverSocket = new ServerSocket(port);
         acceptConnections();
@@ -61,14 +63,13 @@ public class ServerSocketManager {
                 Socket connectionSocket = serverSocket.accept();
                 logger.info("Accepted connection from: {}", connectionSocket.getInetAddress());
 
-                ClientSocketHandler clientHandler = new ClientSocketHandler(
-                        connectionSocket,
-                        getNewClientConnection(connectionSocket, clientId),
-                        clientId, null);
+                long finalClientId = clientId++;
+                ClientSocketHandler clientSocketHandler = new ClientSocketHandler(connectionSocket,
+                        getNewClientConnection(connectionSocket, finalClientId), finalClientId, null);
 
-                clientHandler.start();
-                clientHandlers.add(clientHandler);
-                clientId++;
+                clientHandlersExecutor.submit(clientSocketHandler);
+                clientHandlersExecutor.submit(clientSocketHandler.getQueueHandlerRunnable());
+
             } catch (SocketException e) {
                 // The Socket was closed while accept() was waiting, break the loop
                 if (!doContinueAccept) {
@@ -81,12 +82,12 @@ public class ServerSocketManager {
     }
 
     /**
-     * Get the list of client handlers
+     * Return if the client handlers are terminated
      *
-     * @return The list of client handlers
+     * @return true if the client handlers are terminated
      */
-    public ArrayList<ClientSocketHandler> getClientHandlers() {
-        return clientHandlers;
+    public boolean isClientHandlersTerminated() {
+        return clientHandlersExecutor.isTerminated();
     }
 
     /**
@@ -94,7 +95,7 @@ public class ServerSocketManager {
      *
      * @throws IOException If the server socket cannot be closed
      */
-    public void stop() throws IOException {
+    public synchronized void stop() throws IOException {
         logger.info("Shutting down Socket server");
         doContinueAccept = false;
         stopClientHandlers();
@@ -106,24 +107,7 @@ public class ServerSocketManager {
      */
     public void stopClientHandlers() {
         logger.info("Shutting down client handlers");
-        // Use an iterator to avoid ConcurrentModificationException
-        Iterator<ClientSocketHandler> iterator = clientHandlers.iterator();
-        while (iterator.hasNext()) {
-            ClientSocketHandler clientHandler = iterator.next();
-            clientHandler.interrupt();
-            iterator.remove();
-        }
-    }
-
-    /**
-     * Join all client handlers
-     *
-     * @throws InterruptedException If the thread is interrupted while joining
-     */
-    public synchronized void joinClientHandlers() throws InterruptedException {
-        for (ClientSocketHandler clientHandler : clientHandlers) {
-            clientHandler.join();
-        }
+        clientHandlersExecutor.shutdown();
     }
 
     /**

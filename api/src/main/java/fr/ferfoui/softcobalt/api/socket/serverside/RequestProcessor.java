@@ -30,5 +30,12 @@ public interface RequestProcessor {
      * @param logger the logger to use
      * @return true if the server should continue listening for requests
      */
-    boolean processRequest(Logger logger);
+    boolean processRequest(byte[] availableData, Logger logger);
+
+    /**
+     * Close the connection
+     *
+     * @throws IOException If the connection cannot be closed
+     */
+    void close() throws IOException;
 }

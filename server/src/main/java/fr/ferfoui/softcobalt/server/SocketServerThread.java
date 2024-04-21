@@ -73,8 +73,8 @@ public class SocketServerThread extends Thread {
         }
     }
 
-    public ArrayList<ClientSocketHandler> getClientHandlers() {
-        return serverSocketManager.getClientHandlers();
+    public boolean isClientHandlersTerminated() {
+        return serverSocketManager.isClientHandlersTerminated();
     }
 
 
@@ -90,7 +90,7 @@ public class SocketServerThread extends Thread {
         }
 
         @Override
-        public boolean processRequest(Logger logger) {
+        public boolean processRequest(byte[] availableData, Logger logger) {
             String request = null;
             try {
                 request = in.readUTF();

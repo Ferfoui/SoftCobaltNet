@@ -1,11 +1,14 @@
 package fr.ferfoui.softcobalt.api.socket.serverside;
 
+import fr.ferfoui.softcobalt.api.socket.DataSocketManager;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Class used to handle the client socket connection.
@@ -16,13 +19,13 @@ import java.net.Socket;
  * @author Ferfoui
  * @since 1.0
  */
-public class ClientSocketHandler extends Thread {
-    private final Socket clientSocket;
-    private final ClientConnection clientConnection;
+public class ClientSocketHandler extends DataSocketManager implements Runnable {
+
+    private final RequestProcessor clientConnection;
     private final long clientId;
-    private final Logger logger;
 
     private boolean doContinueListening = false;
+    private final BlockingQueue<byte[]> queue = new LinkedBlockingQueue<>();
 
     /**
      * Constructor for the ClientSocketHandler
@@ -32,11 +35,9 @@ public class ClientSocketHandler extends Thread {
      * @param clientId         The id of the client
      * @param logger           The logger to use, if null, a new logger will be created
      */
-    public ClientSocketHandler(Socket socket, ClientConnection clientConnection, long clientId, @Nullable Logger logger) {
-        super("client-socket-handler-" + clientId);
-        this.clientSocket = socket;
+    public ClientSocketHandler(Socket socket, RequestProcessor clientConnection, long clientId, @Nullable Logger logger) {
+        super(socket, logger);
         this.clientId = clientId;
-        this.logger = getLogger(logger);
         this.clientConnection = clientConnection;
     }
 
@@ -46,9 +47,10 @@ public class ClientSocketHandler extends Thread {
      * @param logger The logger to use, if null, a new logger will be created
      * @return The logger to use
      */
-    private Logger getLogger(@Nullable Logger logger) {
-        return (logger == null) ? LoggerFactory.getLogger(this.getName())
-                : LoggerFactory.getLogger(logger.getName() + "-" + this.getName());
+    @Override
+    protected Logger getLogger(@Nullable Logger logger) {
+        return (logger == null) ? LoggerFactory.getLogger("client-socket-handler-" + clientId)
+                : LoggerFactory.getLogger(logger.getName() + "-" + "client-socket-handler-" + clientId);
     }
 
     /**
@@ -56,20 +58,21 @@ public class ClientSocketHandler extends Thread {
      */
     @Override
     public void run() {
+        logger.info("Client-{} connected on port {}", clientId, socket.getPort());
         try {
-            logger.info("Client-{} connected on port {}", clientId, clientSocket.getPort());
             clientConnection.initializeDataStreams();
             doContinueListening = true;
 
             while (doContinueListening) {
-                doContinueListening = clientConnection.processRequest(logger);
+                byte[] availableData = waitUntilDataAvailable();
+                doContinueListening = clientConnection.processRequest(availableData, logger);
                 logger.debug("The server should continue listening: {}", doContinueListening);
             }
 
             clientConnection.close();
             logger.info("Client-{} disconnected", clientId);
         } catch (IOException e) {
-            logger.error("Exception caught when trying to listen on port {} or listening for a connection", clientSocket.getPort(), e);
+            logger.error("Exception caught when trying to listen on port {} or listening for a connection", socket.getPort(), e);
         }
     }
 
@@ -80,13 +83,5 @@ public class ClientSocketHandler extends Thread {
         doContinueListening = false;
     }
 
-    /**
-     * Check if the socket is closed
-     *
-     * @return true if the socket is closed, false otherwise
-     */
-    public boolean isClosed() {
-        return clientSocket.isClosed();
-    }
 }
 
