@@ -1,6 +1,7 @@
 package fr.ferfoui.softcobalt.api.requestformat.datasending;
 
 import fr.ferfoui.softcobalt.api.requestformat.header.Header;
+import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
 import fr.ferfoui.softcobalt.api.security.EncryptDecryptCipher;
 import fr.ferfoui.softcobalt.api.security.key.AsymmetricKeysManager;
 import fr.ferfoui.softcobalt.api.security.key.RsaKeysManager;
@@ -35,9 +36,12 @@ public class SecureDataFormatterTest {
 
         DataReader dataReader = new DataReader(decryptedRequest);
 
-        Header header = dataReader.readHeader();
+        int requestsCount = dataReader.getRequestsCount();
+        assertEquals(1, requestsCount);
 
-        String body = new String(dataReader.readBody());
+        DataRequest dataRequest = dataReader.getRequests().get(0);
+        Header header = dataRequest.header();
+        String body = new String(dataRequest.body());
 
         assertEquals(SAMPLE_TEXT, body);
         assertNotNull(header.getHeaderBytes());

@@ -6,7 +6,6 @@ import fr.ferfoui.softcobalt.api.requestformat.RequestFormatting;
 import fr.ferfoui.softcobalt.api.security.key.AsymmetricKeysManager;
 import fr.ferfoui.softcobalt.api.security.key.RsaKeysManager;
 import fr.ferfoui.softcobalt.api.socket.serverside.ClientConnection;
-import fr.ferfoui.softcobalt.api.socket.serverside.ClientSocketHandler;
 import fr.ferfoui.softcobalt.api.socket.serverside.ServerSocketManager;
 import fr.ferfoui.softcobalt.common.Constants;
 import fr.ferfoui.softcobalt.common.Utils;
@@ -17,8 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 
 public class SocketServerThread extends Thread {
 
@@ -45,7 +42,7 @@ public class SocketServerThread extends Thread {
                 logger.info("Generating RSA keys");
                 rsaKeysManager.generateKeys();
                 rsaKeysManager.saveKeysToFiles(publicKeyFile, privateKeyFile);
-            } catch (NoSuchAlgorithmException | IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
@@ -85,16 +82,14 @@ public class SocketServerThread extends Thread {
          * @param socket   The socket to handle
          * @param clientId The id of the client
          */
-        public NiceRequestProcessor(Socket socket, int clientId) {
+        public NiceRequestProcessor(Socket socket, long clientId) {
             super(socket, clientId);
         }
 
         @Override
         public boolean processRequest(byte[] availableData, Logger logger) {
-            String request = null;
             try {
-                request = in.readUTF();
-                logger.info("Received request: {}", request);
+                logger.info("Received request: {}", availableData);
 
                 if (!Utils.isBase64(request)) {
                     logger.info("Request is not encoded, sending public key");
@@ -118,12 +113,5 @@ public class SocketServerThread extends Thread {
             return request != null && !request.equals("exit");
         }
 
-        private String decryptRequest(String request) throws GeneralSecurityException {
-            return RequestFormatting.decodeAndDecrypt(request, rsaKeysManager.getPrivateKey(), ApiConstants.SecurityConstants.RSA_ALGORITHM);
-        }
-
-        private void sendPublicKey() throws IOException {
-            out.writeUTF(PublicKeySendingUtils.createPublicKeyMessage(rsaKeysManager.getPublicKey()));
-        }
     }
 }

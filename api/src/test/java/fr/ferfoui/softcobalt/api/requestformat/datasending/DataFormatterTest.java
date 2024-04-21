@@ -3,6 +3,7 @@ package fr.ferfoui.softcobalt.api.requestformat.datasending;
 import fr.ferfoui.softcobalt.api.ApiConstants;
 import fr.ferfoui.softcobalt.api.requestformat.PublicKeySendingUtils;
 import fr.ferfoui.softcobalt.api.requestformat.header.Header;
+import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
 import fr.ferfoui.softcobalt.api.security.key.AsymmetricKeysManager;
 import fr.ferfoui.softcobalt.api.security.key.RsaKeysManager;
 import org.junit.jupiter.api.Test;
@@ -24,10 +25,12 @@ public class DataFormatterTest {
         byte[] request = dataFormatter.createStringRequest(SAMPLE_TEXT);
 
         DataReader dataReader = new DataReader(request);
+        int requestsCount = dataReader.getRequestsCount();
+        assertEquals(1, requestsCount);
 
-        Header header = dataReader.readHeader();
-
-        String body = new String(dataReader.readBody());
+        DataRequest dataRequest = dataReader.getRequests().get(0);
+        Header header = dataRequest.header();
+        String body = new String(dataRequest.body());
 
         assertEquals(SAMPLE_TEXT, body);
         assertNotNull(header.getHeaderBytes());
@@ -47,7 +50,11 @@ public class DataFormatterTest {
 
 
         DataReader dataReader = new DataReader(request);
-        Header header = dataReader.readHeader();
+        int requestsCount = dataReader.getRequestsCount();
+        assertEquals(1, requestsCount);
+
+        DataRequest dataRequest = dataReader.getRequests().get(0);
+        Header header = dataRequest.header();
 
         String foundAlgorithm = null;
         for (String keyword : header.getSecondaryKeywords()) {
@@ -56,7 +63,9 @@ public class DataFormatterTest {
             }
         }
 
-        byte[] body = dataReader.readBody();
+        assertNotNull(foundAlgorithm);
+
+        byte[] body = dataRequest.body();
         Key decodedPublicKey = PublicKeySendingUtils.decodeReceivedPublicKey(body, foundAlgorithm);
 
         assertEquals(publicKey, decodedPublicKey);

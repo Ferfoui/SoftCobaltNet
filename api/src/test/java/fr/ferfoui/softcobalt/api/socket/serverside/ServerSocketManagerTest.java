@@ -2,10 +2,12 @@ package fr.ferfoui.softcobalt.api.socket.serverside;
 
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataFormatter;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataReader;
+import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
 import fr.ferfoui.softcobalt.api.socket.clientside.ClientSocketManager;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -35,12 +37,16 @@ public class ServerSocketManagerTest {
         byte[] bytesToSend = formatter.createStringRequest("Hello, server!");
         client.sendBytes(bytesToSend);
 
-        String response1 = new String(new DataReader(client.waitUntilDataAvailable()).readBody());
+        List<DataRequest> requests = new DataReader(client.waitUntilDataAvailable()).getRequests();
+        assertEquals(1, requests.size());
+        String response1 = new String(requests.get(0).body());
 
         bytesToSend = formatter.createStringRequest(SampleStringClientConnection.EXIT_COMMAND);
         client.sendBytes(bytesToSend);
 
-        String response2 = new String(new DataReader(client.waitUntilDataAvailable()).readBody());
+        requests = new DataReader(client.waitUntilDataAvailable()).getRequests();
+        assertEquals(1, requests.size());
+        String response2 = new String(requests.get(0).body());
 
         serverThread.interrupt();
 

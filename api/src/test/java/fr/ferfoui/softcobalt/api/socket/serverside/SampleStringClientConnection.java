@@ -2,6 +2,7 @@ package fr.ferfoui.softcobalt.api.socket.serverside;
 
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataFormatter;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataReader;
+import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class SampleStringClientConnection extends ClientConnection {
                 return true;
             }
             DataReader reader = new DataReader(availableBytes);
-            body = readStringBody(reader);
+            body = readStringBody(reader.getRequests().get(0));
             logger.info("Received request: {}", body);
 
             String response = "Server response for: '" + body + "'";
@@ -53,8 +54,8 @@ public class SampleStringClientConnection extends ClientConnection {
         return !body.isEmpty() && !body.equals(EXIT_COMMAND);
     }
 
-    private String readStringBody(DataReader reader) {
-        return new String(reader.readBody());
+    private String readStringBody(DataRequest request) {
+        return new String(request.body());
     }
 
     private void sendResponse(String response) throws IOException {

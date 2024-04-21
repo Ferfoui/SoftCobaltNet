@@ -1,6 +1,7 @@
 package fr.ferfoui.softcobalt.api.requestformat.header;
 
 import fr.ferfoui.softcobalt.api.ApiConstants;
+import fr.ferfoui.softcobalt.api.requestformat.datasending.BytesUtils;
 
 import java.nio.charset.StandardCharsets;
 
@@ -8,6 +9,7 @@ public class HeaderFormatUtils {
 
     private static final String HEADER_PREFIX = ApiConstants.RequestFormatConstants.HEADER_PREFIX;
     private static final String HEADER_SUFFIX = ApiConstants.RequestFormatConstants.HEADER_SUFFIX;
+    private static final int HEADER_MINIMAL_SIZE = HEADER_PREFIX.length() + HEADER_SUFFIX.length();
 
     /**
      * Creates a header for a request.
@@ -27,6 +29,21 @@ public class HeaderFormatUtils {
      */
     public static String extractHeader(byte[] data) {
         return extractStringFromByteArray(data, HEADER_PREFIX, HEADER_SUFFIX);
+    }
+
+    /**
+     * Checks if a byte array contains the correct header.
+     *
+     * @param data The byte array to check.
+     * @return True if the byte array contains the correct header, false otherwise.
+     */
+    public static boolean doesDataContainCorrectHeader(byte[] data) {
+        if (data == null || data.length < HEADER_MINIMAL_SIZE){
+            return false;
+        }
+
+        return BytesUtils.doesByteArrayContain(data, HEADER_PREFIX.getBytes(StandardCharsets.UTF_8))
+                && BytesUtils.doesByteArrayContain(data, HEADER_SUFFIX.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

@@ -3,6 +3,7 @@ package fr.ferfoui.softcobalt.api.requestformat.datasending;
 import fr.ferfoui.softcobalt.api.ApiConstants.RequestFormatConstants;
 import fr.ferfoui.softcobalt.api.requestformat.header.Header;
 import fr.ferfoui.softcobalt.api.requestformat.header.HeaderPrincipalKeyword;
+import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
 
 import java.security.Key;
 
@@ -17,13 +18,7 @@ public class DataFormatter implements RequestFormatter {
      */
     @Override
     public byte[] createRequest(Header header, byte[] body) {
-        byte[] headerBytes = header.getHeaderBytes();
-        byte[] request = new byte[headerBytes.length + body.length];
-
-        System.arraycopy(headerBytes, 0, request, 0, headerBytes.length);
-        System.arraycopy(body, 0, request, headerBytes.length, body.length);
-
-        return request;
+        return new DataRequest(header, body).getBytes();
     }
 
     /**

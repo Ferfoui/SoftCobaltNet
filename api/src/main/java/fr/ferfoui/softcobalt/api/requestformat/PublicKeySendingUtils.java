@@ -18,7 +18,7 @@ import java.util.Base64;
  * @since 1.0
  */
 public class PublicKeySendingUtils {
-    public static final String PUBLIC_KEY_SPLITTER = ApiConstants.RequestFormatConstants.REQUEST_SPLITTER;
+    public static final String PUBLIC_KEY_SPLITTER = ApiConstants.RequestFormatConstants.REQUEST_SUB_SPLITTER;
 
     public static final String PUBLIC_KEY_PREFIX = ApiConstants.RequestFormatConstants.PUBLIC_KEY_PREFIX;
     public static final String PUBLIC_KEY_SUFFIX = ApiConstants.RequestFormatConstants.PUBLIC_KEY_SUFFIX;
