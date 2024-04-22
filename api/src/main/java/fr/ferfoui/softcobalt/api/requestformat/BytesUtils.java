@@ -1,11 +1,30 @@
-package fr.ferfoui.softcobalt.api.requestformat.datasending;
+package fr.ferfoui.softcobalt.api.requestformat;
 
+/**
+ * This class contains utility methods for working with byte arrays.
+ */
 public class BytesUtils {
 
+    /**
+     * This method is used to check if a byte array contains a specific pattern.
+     *
+     * @param outerArray The byte array in which we are trying to find the pattern.
+     * @param pattern    The pattern we are trying to find in the byte array.
+     * @return The method returns true if the pattern is found in the byte array, false otherwise.
+     */
     public static boolean doesByteArrayContain(byte[] outerArray, byte[] pattern) {
         return indexOf(outerArray, pattern) != -1;
     }
 
+    /**
+     * This method is used to check if a byte array contains two specific patterns.
+     * It is more efficient than calling the method twice for each pattern.
+     *
+     * @param outerArray The byte array in which we are trying to find the pattern.
+     * @param pattern1   The first pattern we are trying to find in the byte array.
+     * @param pattern2   The second pattern we are trying to find in the byte array.
+     * @return The method returns true if both patterns are found in the byte array, false otherwise.
+     */
     public static boolean doesByteArrayContain(byte[] outerArray, byte[] pattern1, byte[] pattern2) {
         if (pattern1.length == 0 || pattern2.length == 0) return false;
 
@@ -28,12 +47,12 @@ public class BytesUtils {
 
                 if (!found1 && tempFound1 && (outerArray[i + j] != biggerPattern[j])) {
                     tempFound1 = false;
-                    if (found2) break;
+                    if (found2 || !tempFound2) break;
                 }
 
                 if (!found2 && tempFound2 && (j < smallerPattern.length) && (outerArray[i + j] != smallerPattern[j])) {
                     tempFound2 = false;
-                    if (found1) break;
+                    if (found1 || !tempFound1) break;
                 }
             }
 

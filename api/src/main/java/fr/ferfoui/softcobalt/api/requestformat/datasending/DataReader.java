@@ -1,6 +1,7 @@
 package fr.ferfoui.softcobalt.api.requestformat.datasending;
 
 import fr.ferfoui.softcobalt.api.ApiConstants;
+import fr.ferfoui.softcobalt.api.requestformat.BytesUtils;
 import fr.ferfoui.softcobalt.api.requestformat.header.Header;
 import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
 

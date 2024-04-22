@@ -1,7 +1,7 @@
 package fr.ferfoui.softcobalt.api.requestformat.header;
 
 import fr.ferfoui.softcobalt.api.ApiConstants;
-import fr.ferfoui.softcobalt.api.requestformat.datasending.BytesUtils;
+import fr.ferfoui.softcobalt.api.requestformat.BytesUtils;
 
 import java.nio.charset.StandardCharsets;
 
@@ -42,8 +42,7 @@ public class HeaderFormatUtils {
             return false;
         }
 
-        return BytesUtils.doesByteArrayContain(data, HEADER_PREFIX.getBytes(StandardCharsets.UTF_8))
-                && BytesUtils.doesByteArrayContain(data, HEADER_SUFFIX.getBytes(StandardCharsets.UTF_8));
+        return BytesUtils.doesByteArrayContain(data, HEADER_PREFIX.getBytes(StandardCharsets.UTF_8), HEADER_SUFFIX.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
