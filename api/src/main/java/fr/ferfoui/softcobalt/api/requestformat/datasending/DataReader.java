@@ -1,15 +1,15 @@
 package fr.ferfoui.softcobalt.api.requestformat.datasending;
 
-import fr.ferfoui.softcobalt.api.ApiConstants;
-import fr.ferfoui.softcobalt.api.requestformat.BytesUtils;
 import fr.ferfoui.softcobalt.api.requestformat.header.Header;
+import fr.ferfoui.softcobalt.api.requestformat.header.HeaderFormatUtils;
 import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
+import org.jetbrains.annotations.NotNull;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class DataReader {
+public class DataReader implements RequestReader {
 
     private final List<DataRequest> requests;
 
@@ -22,50 +22,80 @@ public class DataReader {
         this.requests = splitRequests(data);
     }
 
+    /**
+     * Return the requests contained in the data.
+     *
+     * @return The list of requests.
+     */
+    @Override
     public List<DataRequest> getRequests() {
         return requests;
     }
 
+    /**
+     * Return the number of requests contained in the data.
+     *
+     * @return The number of requests.
+     */
+    @Override
     public int getRequestsCount() {
         return requests.size();
     }
 
     /**
-     * Splits the data into different requests.
+     * Splits the provided data into different requests.
+     * This method takes a byte array as input, representing the data to be split into requests.
+     * It iterates over the data, extracting the header and body for each request and creating a new DataRequest object.
+     * Each DataRequest object is then added to a list, which is returned at the end of the method.
      *
-     * @param data The data to split.
-     * @return The list of requests.
+     * @param data The byte array containing the data to be split into requests.
+     * @return A list of DataRequest objects, each representing a single request extracted from the data.
      */
     private List<DataRequest> splitRequests(byte[] data) {
         List<DataRequest> requests = new ArrayList<>();
 
-        int currentIndex = 0;
-        while (currentIndex != data.length) {
-            int headerSize = calculateHeaderSize(data);
-            byte[] headerBytes = new byte[headerSize];
-            System.arraycopy(data, currentIndex, headerBytes, 0, headerSize);
-
-            Header header = new Header(headerBytes);
-            byte[] body = new byte[data.length - headerSize];
-            System.arraycopy(data, currentIndex + headerSize, body, 0, body.length);
-
-            DataRequest request = new DataRequest(header, body);
-
-            requests.add(request);
-            currentIndex += headerSize + body.length;
+        if (data == null || data.length == 0 || !HeaderFormatUtils.doesDataContainCorrectHeader(data)) {
+            return requests;
         }
 
+        // Extract the indexes of the headers in the data
+        List<Integer> headerIndexes = HeaderFormatUtils.extractHeaderIndexes(data);
+
+        // Iterate over the header indexes
+        for (int i = 0; i < headerIndexes.size(); i++) {
+            DataRequest request = getRequest(data, headerIndexes, i);
+            requests.add(request);
+        }
+
+        // Return the list of DataRequest objects
         return requests;
     }
 
-    private int calculateHeaderSize(byte[] data) {
-        byte[] headerSuffixBytes = ApiConstants.RequestFormatConstants.HEADER_SUFFIX.getBytes(StandardCharsets.UTF_8);
-        int suffixIndex = BytesUtils.indexOf(data, headerSuffixBytes);
+    /**
+     * Extracts a single request from the data based on the header indexes.
+     * This method takes the data byte array, a list of header indexes, and the index of the current header to extract.
+     * It calculates the start and end indexes for the current request based on the header indexes.
+     * It then extracts the header and body from the data, creates a new DataRequest object, and returns it.
+     *
+     * @param data          The byte array containing the data.
+     * @param headerIndexes The list of indexes where the headers are located in the data.
+     * @param i             The index of the current header to extract.
+     * @return A DataRequest object representing the current request extracted from the data.
+     */
+    private static @NotNull DataRequest getRequest(byte[] data, List<Integer> headerIndexes, int i) {
+        int startIndex = headerIndexes.get(i);
+        int endIndex = i + 1 < headerIndexes.size() ? headerIndexes.get(i + 1) : data.length;
 
-        if (suffixIndex == -1) {
-            throw new IllegalArgumentException("Invalid data: Header not found");
-        }
+        // Extract the header and body from the data
+        byte[] requestBytes = Arrays.copyOfRange(data, startIndex, endIndex);
 
-        return suffixIndex + headerSuffixBytes.length;
+        int headerSize = HeaderFormatUtils.calculateHeaderSize(requestBytes);
+
+        byte[] headerBytes = Arrays.copyOfRange(requestBytes, 0, headerSize);
+        byte[] body = Arrays.copyOfRange(requestBytes, headerSize, requestBytes.length);
+
+        // Create a new DataRequest object with the extracted header and body
+        return new DataRequest(new Header(headerBytes), body);
     }
+
 }

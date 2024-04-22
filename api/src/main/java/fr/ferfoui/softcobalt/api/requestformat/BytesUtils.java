@@ -1,9 +1,35 @@
 package fr.ferfoui.softcobalt.api.requestformat;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class contains utility methods for working with byte arrays.
  */
 public class BytesUtils {
+
+    /**
+     * This method is used to concatenate multiple byte arrays into a single byte array.
+     *
+     * @param arrays The byte arrays to concatenate.
+     * @return The concatenated byte array.
+     */
+    public static byte[] concatenateByteArrays(byte[]... arrays) {
+        int totalLength = 0;
+        for (byte[] array : arrays) {
+            totalLength += array.length;
+        }
+
+        byte[] result = new byte[totalLength];
+        int currentIndex = 0;
+        for (byte[] array : arrays) {
+            System.arraycopy(array, 0, result, currentIndex, array.length);
+            currentIndex += array.length;
+        }
+
+        return result;
+    }
 
     /**
      * This method is used to check if a byte array contains a specific pattern.
@@ -82,20 +108,82 @@ public class BytesUtils {
         for (int i = 0; i < (outerArray.length - smallerArray.length + 1); ++i) {
             boolean found = true;
 
-            // Iterate over the smaller array and check if all its elements are found in the outer array at the current position
+            // Iterate over the smaller array
+            // and check if all its elements are found in the outer array at the current position
             for (int j = 0; j < smallerArray.length; ++j) {
-                // If the current element of the smaller array does not match the corresponding element in the outer array, break the loop
+                // If the current element of the smaller array does not match the corresponding element in the outer array,
+                // break the loop
                 if (outerArray[i + j] != smallerArray[j]) {
                     found = false;
                     break;
                 }
             }
 
-            // If all elements of the smaller array were found in the outer array at the current position, return the current position
+            // If all elements of the smaller array were found in the outer array at the current position,
+            // return the current position
             if (found) return i;
         }
 
         // If the smaller array was not found in the outer array, return -1
         return -1;
     }
+
+    /**
+     * This method is used to find all occurrences of a smaller byte array within a larger byte array.
+     *
+     * @param outerArray   The larger byte array in which we are trying to find the smaller byte array.
+     * @param smallerArray The smaller byte array which we are trying to find within the larger byte array.
+     * @return The method returns a list of indexes where the smaller byte array is found within the larger byte array.
+     * If the smaller byte array is not found within the larger byte array, the method returns an empty list.
+     */
+    public static List<Integer> indexesOf(byte[] outerArray, byte[] smallerArray) {
+        List<Integer> indexes = new ArrayList<>();
+
+        if (smallerArray.length == 0) return indexes;
+        // Iterate over the outer array up to the point where the smaller array could still fully fit
+        for (int i = 0; i < (outerArray.length - smallerArray.length + 1); ++i) {
+            boolean found = true;
+
+            // Iterate over the smaller array
+            // and check if all its elements are found in the outer array at the current position
+            for (int j = 0; j < smallerArray.length; ++j) {
+                // If the current element of the smaller array does not match the corresponding element in the outer array,
+                // break the loop
+                if (outerArray[i + j] != smallerArray[j]) {
+                    found = false;
+                    break;
+                }
+            }
+
+            // If all elements of the smaller array were found in the outer array at the current position,
+            // return the current position
+            if (found) indexes.add(i);
+        }
+
+        return indexes;
+    }
+
+    /**
+     * This method extracts a string from a byte array, given a prefix and suffix.
+     * If either the prefix or suffix is not found, the method returns null.
+     * Otherwise, it returns the substring between the prefix and suffix.
+     *
+     * @param data   The byte array containing the string. This should be non-null.
+     * @param prefix The prefix to delete from the string. This should be non-null.
+     * @param suffix The suffix to delete from the string. This should be non-null.
+     * @return The string extracted from the byte array, or null if the prefix or suffix is not found.
+     */
+    public static String extractStringFromByteArray(byte[] data, String prefix, String suffix) {
+        String dataString = new String(data, StandardCharsets.UTF_8);
+
+        int prefixIndex = dataString.indexOf(prefix);
+        int suffixIndex = dataString.indexOf(suffix);
+
+        if (prefixIndex == -1 || suffixIndex == -1) {
+            return null;
+        }
+
+        return dataString.substring(prefixIndex + prefix.length(), suffixIndex);
+    }
+
 }

@@ -2,13 +2,14 @@ package fr.ferfoui.softcobalt.api.requestformat.request;
 
 import fr.ferfoui.softcobalt.api.requestformat.header.Header;
 
-public record DataRequest(Header header, byte[] body) {
+public record DataRequest(Header header, byte[] body) implements Request {
 
     /**
      * Returns the byte array corresponding to the request.
      *
      * @return The byte array of the request.
      */
+    @Override
     public byte[] getBytes() {
         byte[] headerBytes = header.getHeaderBytes();
         byte[] request = new byte[headerBytes.length + body.length];

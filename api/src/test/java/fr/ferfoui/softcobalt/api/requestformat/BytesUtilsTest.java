@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BytesUtilsTest {
 
-    private byte[] createRandomByteArray(int size) {
+    public static byte[] createRandomByteArray(int size) {
         byte[] array = new byte[size];
         for (int i = 0; i < size; i++) {
             array[i] = (byte) (Math.random() * 256);
@@ -50,6 +50,33 @@ public class BytesUtilsTest {
             else i--;
         }
         return nonMatchingPatterns;
+    }
+
+    @Test
+    public void testConcatenateByteArrays() {
+        byte[] array1 = createRandomByteArray(10);
+        byte[] array2 = createRandomByteArray(20);
+        byte[] array3 = createRandomByteArray(30);
+
+        byte[] concatenatedArray = BytesUtils.concatenateByteArrays(array1, array2, array3);
+
+        assertEquals(array1.length + array2.length + array3.length, concatenatedArray.length,
+                "The concatenated array should have the sum of the lengths of the input arrays");
+
+        for (int i = 0; i < array1.length; i++) {
+            assertEquals(array1[i], concatenatedArray[i],
+                    "The concatenated array should contain the first array");
+        }
+
+        for (int i = 0; i < array2.length; i++) {
+            assertEquals(array2[i], concatenatedArray[i + array1.length],
+                    "The concatenated array should contain the second array");
+        }
+
+        for (int i = 0; i < array3.length; i++) {
+            assertEquals(array3[i], concatenatedArray[i + array1.length + array2.length],
+                    "The concatenated array should contain the third array");
+        }
     }
 
     @Test
@@ -155,6 +182,39 @@ public class BytesUtilsTest {
             int index = BytesUtils.indexOf(data, pattern);
             assertEquals(-1, index, "Pattern " + Arrays.toString(pattern) + " should not be found in data");
         }
+    }
+
+    @Test
+    public void testIndexesOf() {
+        byte[] data = createRandomByteArray(30);
+
+        List<byte[]> matchingPatterns = createRandomMatchingPatterns(80, data);
+        List<byte[]> nonMatchingPatterns = createRandomNonMatchingPatterns(80, data);
+
+        for (byte[] pattern : matchingPatterns) {
+            List<Integer> indexes = BytesUtils.indexesOf(data, pattern);
+            assertFalse(indexes.isEmpty(), "Pattern " + Arrays.toString(pattern) + " should be found in data");
+
+            for (int index : indexes) {
+                assertArrayEquals(
+                        pattern, Arrays.copyOfRange(data, index, index + pattern.length),
+                        "Pattern " + Arrays.toString(pattern) + " should be found at index " + index
+                );
+            }
+        }
+
+        for (byte[] pattern : nonMatchingPatterns) {
+            List<Integer> indexes = BytesUtils.indexesOf(data, pattern);
+            assertEquals(0, indexes.size(), "Pattern " + Arrays.toString(pattern) + " should not be found in data");
+        }
+    }
+
+    @Test
+    public void testExtractStringFromByteArray() {
+        byte[] data = "start_header:::header:::end_header".getBytes();
+
+        String extractedString = BytesUtils.extractStringFromByteArray(data, "start_header:::", ":::end_header");
+        assertEquals("header", extractedString, "The extracted string should be 'header'");
     }
 
 }

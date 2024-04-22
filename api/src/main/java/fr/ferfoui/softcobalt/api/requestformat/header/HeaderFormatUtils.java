@@ -4,6 +4,7 @@ import fr.ferfoui.softcobalt.api.ApiConstants;
 import fr.ferfoui.softcobalt.api.requestformat.BytesUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class HeaderFormatUtils {
 
@@ -24,11 +25,11 @@ public class HeaderFormatUtils {
     /**
      * Extracts the header from a byte array.
      *
-     * @param data The byte array containing the header.
+     * @param headerBytes The byte array containing the header.
      * @return The header as a string.
      */
-    public static String extractHeader(byte[] data) {
-        return extractStringFromByteArray(data, HEADER_PREFIX, HEADER_SUFFIX);
+    public static String extractHeader(byte[] headerBytes) {
+        return BytesUtils.extractStringFromByteArray(headerBytes, HEADER_PREFIX, HEADER_SUFFIX);
     }
 
     /**
@@ -46,28 +47,29 @@ public class HeaderFormatUtils {
     }
 
     /**
-     * This method extracts a string from a byte array, given a prefix and suffix.
-     * The method first converts the byte array into a string using UTF-8 encoding.
-     * It then finds the indices of the prefix and suffix in the string.
-     * If either the prefix or suffix is not found, the method returns null.
-     * Otherwise, it returns the substring between the prefix and suffix.
+     * Extracts the indexes of the headers in the data.
      *
-     * @param data   The byte array containing the string. This should be non-null.
-     * @param prefix The prefix to delete from the string. This should be non-null.
-     * @param suffix The suffix to delete from the string. This should be non-null.
-     * @return The string extracted from the byte array, or null if the prefix or suffix is not found.
+     * @param data The data to analyze.
+     * @return The indexes of the headers.
      */
-    public static String extractStringFromByteArray(byte[] data, String prefix, String suffix) {
-        String dataString = new String(data, StandardCharsets.UTF_8);
-
-        int prefixIndex = dataString.indexOf(prefix);
-        int suffixIndex = dataString.indexOf(suffix);
-
-        if (prefixIndex == -1 || suffixIndex == -1) {
-            return null;
-        }
-
-        return dataString.substring(prefixIndex + prefix.length(), suffixIndex);
+    public static List<Integer> extractHeaderIndexes(byte[] data) {
+        return BytesUtils.indexesOf(data, HEADER_PREFIX.getBytes(StandardCharsets.UTF_8));
     }
 
+    /**
+     * Calculates the size of the header in the data.
+     *
+     * @param data The data to analyze.
+     * @return The size of the header.
+     */
+    public static int calculateHeaderSize(byte[] data) {
+        byte[] headerSuffixBytes = ApiConstants.RequestFormatConstants.HEADER_SUFFIX.getBytes(StandardCharsets.UTF_8);
+        int suffixIndex = BytesUtils.indexOf(data, headerSuffixBytes);
+
+        if (suffixIndex == -1) {
+            throw new IllegalArgumentException("Invalid data: Header not found");
+        }
+
+        return suffixIndex + headerSuffixBytes.length;
+    }
 }
