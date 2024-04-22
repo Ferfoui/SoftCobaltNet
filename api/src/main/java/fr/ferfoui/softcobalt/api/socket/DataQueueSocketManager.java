@@ -12,21 +12,20 @@ import java.util.concurrent.LinkedBlockingQueue;
  * An abstract class used to manage the socket connection to read data from the socket and put it in a queue.
  * The queue is used to wait for data to be available.
  */
-public abstract class DataSocketManager {
+public abstract class DataQueueSocketManager {
 
-    protected Socket socket;
     protected final Logger logger;
-
     protected final BlockingQueue<byte[]> queue = new LinkedBlockingQueue<>();
+    protected Socket socket;
 
-    public DataSocketManager(Socket socket, Logger logger) {
+    public DataQueueSocketManager(Socket socket, Logger logger) {
         this.socket = socket;
         this.logger = getLogger(logger);
-
     }
 
     /**
      * This method should be implemented by the subclasses to get the logger to use.
+     *
      * @param logger The logger to use, if null, a new logger will be created
      * @return The logger to use
      */
@@ -72,6 +71,9 @@ public abstract class DataSocketManager {
         }
     }
 
+    /**
+     * Close the socket and the queue
+     */
     public boolean isSocketClosed() {
         return socket.isClosed();
     }

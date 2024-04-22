@@ -1,15 +1,17 @@
 package fr.ferfoui.softcobalt.api.socket.clientside;
 
-import fr.ferfoui.softcobalt.api.socket.DataSocketManager;
+import fr.ferfoui.softcobalt.api.socket.DataQueueSocketManager;
+import fr.ferfoui.softcobalt.api.socket.NetworkConnection;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Class used to manage the client socket connection.
@@ -17,12 +19,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Ferfoui
  * @since 1.0
  */
-public class ClientSocketManager extends DataSocketManager {
-
-    private DataInputStream in;
-    private DataOutputStream out;
+public class ClientSocketManager extends DataQueueSocketManager implements NetworkConnection<byte[]> {
 
     private final Thread queueHandlerThread = new Thread(getQueueHandlerRunnable());
+    private DataInputStream in;
+    private DataOutputStream out;
 
     public ClientSocketManager(@Nullable Logger logger) {
         super(null, logger);
@@ -30,6 +31,7 @@ public class ClientSocketManager extends DataSocketManager {
 
     /**
      * This method is returning the logger to use.
+     *
      * @param logger The logger to use, if null, a new logger will be created
      * @return The logger to use
      */
@@ -41,7 +43,8 @@ public class ClientSocketManager extends DataSocketManager {
 
     /**
      * Start the connection to the server
-     * @param ip The IP of the server
+     *
+     * @param ip   The IP of the server
      * @param port The port of the server
      * @throws IOException If the connection cannot be established
      */
@@ -54,34 +57,25 @@ public class ClientSocketManager extends DataSocketManager {
     }
 
     /**
-     * Send a message to the server
-     * @param msg The message to send
-     * @return The response from the server
-     * @throws IOException If the message cannot be sent
-     */
-    @Deprecated
-    public String sendMessage(String msg) throws IOException {
-        logger.info("Sending message: {}", msg);
-        out.writeUTF(msg);
-        return in.readUTF();
-    }
-
-    /**
      * Send bytes to the server
+     *
      * @param bytesToSend The bytes to send
      * @throws IOException If the bytes cannot be sent
      */
-    public void sendBytes(byte[] bytesToSend) throws IOException {
+    @Override
+    public void sendData(byte[] bytesToSend) throws IOException {
         logger.info("Sending bytes: {}", new String(bytesToSend, StandardCharsets.UTF_8));
         out.write(bytesToSend);
     }
 
     /**
      * Receive bytes from the server
-     * @return The bytes received
+     *
+     * @return The received bytes
      * @throws IOException If the bytes cannot be received
      */
-    public byte[] readBytes() throws IOException {
+    @Override
+    public byte[] readData() throws IOException {
         byte[] bytesReceived = new byte[in.available()];
         in.readFully(bytesReceived);
         logger.info("Received bytes: {}", new String(bytesReceived, StandardCharsets.UTF_8));
@@ -90,9 +84,11 @@ public class ClientSocketManager extends DataSocketManager {
 
     /**
      * Stop the connection to the server
+     *
      * @throws IOException If the connection cannot be closed
      */
-    public void stopConnection() throws IOException {
+    @Override
+    public void close() throws IOException {
         logger.info("Stopping connection");
         queueHandlerThread.interrupt();
         in.close();

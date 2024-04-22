@@ -35,14 +35,14 @@ public class ServerSocketManagerTest {
 
         DataFormatter formatter = new DataFormatter();
         byte[] bytesToSend = formatter.createStringRequest("Hello, server!");
-        client.sendBytes(bytesToSend);
+        client.sendData(bytesToSend);
 
         List<DataRequest> requests = new DataReader(client.waitUntilDataAvailable()).getRequests();
         assertEquals(1, requests.size());
         String response1 = new String(requests.get(0).body());
 
         bytesToSend = formatter.createStringRequest(SampleStringClientConnection.EXIT_COMMAND);
-        client.sendBytes(bytesToSend);
+        client.sendData(bytesToSend);
 
         requests = new DataReader(client.waitUntilDataAvailable()).getRequests();
         assertEquals(1, requests.size());

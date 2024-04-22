@@ -60,6 +60,6 @@ public class SampleStringClientConnection extends ClientConnection {
 
     private void sendResponse(String response) throws IOException {
         byte[] bytesToSend = formatter.createStringRequest(response);
-        sendBytes(bytesToSend);
+        sendData(bytesToSend);
     }
 }

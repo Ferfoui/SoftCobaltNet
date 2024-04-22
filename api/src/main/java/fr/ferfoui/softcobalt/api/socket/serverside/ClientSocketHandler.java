@@ -1,14 +1,12 @@
 package fr.ferfoui.softcobalt.api.socket.serverside;
 
-import fr.ferfoui.softcobalt.api.socket.DataSocketManager;
+import fr.ferfoui.softcobalt.api.socket.DataQueueSocketManager;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Class used to handle the client socket connection.
@@ -19,13 +17,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Ferfoui
  * @since 1.0
  */
-public class ClientSocketHandler extends DataSocketManager implements Runnable {
+public class ClientSocketHandler extends DataQueueSocketManager implements Runnable {
 
     private final RequestProcessor clientConnection;
     private final long clientId;
-
     private boolean doContinueListening = false;
-    private final BlockingQueue<byte[]> queue = new LinkedBlockingQueue<>();
 
     /**
      * Constructor for the ClientSocketHandler

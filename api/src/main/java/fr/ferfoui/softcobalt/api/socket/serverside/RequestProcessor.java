@@ -2,9 +2,7 @@ package fr.ferfoui.softcobalt.api.socket.serverside;
 
 import org.slf4j.Logger;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * Interface used to process the requests from the client
@@ -27,6 +25,7 @@ public interface RequestProcessor {
 
     /**
      * Process the request and return true if the server should continue listening for requests
+     *
      * @param logger the logger to use
      * @return true if the server should continue listening for requests
      */
