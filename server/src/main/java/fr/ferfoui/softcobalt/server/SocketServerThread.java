@@ -1,8 +1,6 @@
 package fr.ferfoui.softcobalt.server;
 
 import fr.ferfoui.softcobalt.api.ApiConstants;
-import fr.ferfoui.softcobalt.api.requestformat.PublicKeySendingUtils;
-import fr.ferfoui.softcobalt.api.requestformat.RequestFormatting;
 import fr.ferfoui.softcobalt.api.security.key.AsymmetricKeysManager;
 import fr.ferfoui.softcobalt.api.security.key.RsaKeysManager;
 import fr.ferfoui.softcobalt.api.socket.serverside.ClientConnection;

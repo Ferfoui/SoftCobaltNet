@@ -1,7 +1,6 @@
 package fr.ferfoui.softcobalt.client;
 
 import fr.ferfoui.softcobalt.api.requestformat.PublicKeySendingUtils;
-import fr.ferfoui.softcobalt.api.requestformat.RequestFormatting;
 import fr.ferfoui.softcobalt.api.socket.clientside.ClientSocketManager;
 import fr.ferfoui.softcobalt.common.Constants;
 import fr.ferfoui.softcobalt.common.Utils;
