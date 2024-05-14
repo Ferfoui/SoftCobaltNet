@@ -2,6 +2,11 @@ package fr.ferfoui.softcobalt.api.socket;
 
 import java.io.IOException;
 
+/**
+ * Interface used to manage a network connection
+ *
+ * @param <T> The type of data to send and receive
+ */
 public interface NetworkConnection<T> {
 
     /**
@@ -25,6 +30,6 @@ public interface NetworkConnection<T> {
      *
      * @throws IOException If the connection cannot be closed
      */
-    void close() throws IOException;
+    void closeConnection() throws IOException;
 
 }

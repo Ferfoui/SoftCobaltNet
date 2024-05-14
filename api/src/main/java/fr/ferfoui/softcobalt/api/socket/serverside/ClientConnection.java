@@ -68,7 +68,7 @@ public abstract class ClientConnection implements RequestProcessor, NetworkConne
      * @throws IOException If the connection cannot be closed
      */
     @Override
-    public void close() throws IOException {
+    public void closeConnection() throws IOException {
         in.close();
         out.close();
         socket.close();
