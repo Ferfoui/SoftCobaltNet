@@ -54,6 +54,16 @@ public class SampleStringClientConnection extends ClientConnection {
         return !body.isEmpty() && !body.equals(EXIT_COMMAND);
     }
 
+    /**
+     * Close the connection
+     *
+     * @throws IOException If the connection cannot be closed
+     */
+    @Override
+    public void close() throws IOException {
+        socket.close();
+    }
+
     private String readStringBody(DataRequest request) {
         return new String(request.body());
     }

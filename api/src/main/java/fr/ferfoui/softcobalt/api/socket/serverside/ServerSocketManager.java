@@ -1,5 +1,6 @@
 package fr.ferfoui.softcobalt.api.socket.serverside;
 
+import fr.ferfoui.softcobalt.api.ApiConstants;
 import fr.ferfoui.softcobalt.api.socket.serverside.thread.ServerThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +20,6 @@ import java.util.concurrent.Executors;
  * @since 1.0
  */
 public class ServerSocketManager {
-
-    private static final String[] SECURITY_PROTOCOLS = new String[]{"TLSv1.3"};
-    private static final String[] CIPHER_SUITES = new String[]{"TLS_AES_128_GCM_SHA256"};
 
     private final ExecutorService clientHandlersExecutor = Executors.newCachedThreadPool(new ServerThreadFactory());
     private final SSLServerSocketFactory serverSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
@@ -55,8 +53,8 @@ public class ServerSocketManager {
         //  Check how to use a certificate :
         //  https://docs.oracle.com/cd/E54932_01/doc.705/e54936/cssg_create_ssl_cert.htm#CSVSG178
         serverSocket = (SSLServerSocket) serverSocketFactory.createServerSocket(port);
-        serverSocket.setEnabledProtocols(SECURITY_PROTOCOLS);
-        serverSocket.setEnabledCipherSuites(CIPHER_SUITES);
+        serverSocket.setEnabledProtocols(ApiConstants.SecurityConstants.SECURITY_PROTOCOLS);
+        serverSocket.setEnabledCipherSuites(ApiConstants.SecurityConstants.CIPHER_SUITES);
 
         acceptConnections();
     }

@@ -1,7 +1,7 @@
 package fr.ferfoui.softcobalt.client;
 
 import fr.ferfoui.softcobalt.api.requestformat.PublicKeySendingUtils;
-import fr.ferfoui.softcobalt.api.socket.clientside.ClientSocketManager;
+import fr.ferfoui.softcobalt.api.socket.clientside.SSLClientSocketManager;
 import fr.ferfoui.softcobalt.common.Constants;
 import fr.ferfoui.softcobalt.common.Utils;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class ClientMain {
     }*/
 
     private static final Logger logger = LoggerFactory.getLogger(ClientMain.class);
-    private static final ClientSocketManager clientSocketManager = new ClientSocketManager(logger);
+    private static final SSLClientSocketManager clientSocketManager = new SSLClientSocketManager(logger);
 
     private static PublicKey publicKey = null;
 
