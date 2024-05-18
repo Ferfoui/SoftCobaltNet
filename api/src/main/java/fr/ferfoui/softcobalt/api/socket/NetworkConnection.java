@@ -32,4 +32,11 @@ public interface NetworkConnection<T> {
      */
     void closeConnection() throws IOException;
 
+    /**
+     * Check if the connection is active
+     *
+     * @return True if the connection is active, false otherwise
+     */
+    boolean isConnected();
+
 }

@@ -116,4 +116,14 @@ public class SSLClientSocketManager extends DataQueueSocketManager implements Cl
         out.close();
         socket.close();
     }
+
+    /**
+     * Check if the connection is active
+     *
+     * @return True if the connection is active, false otherwise
+     */
+    @Override
+    public boolean isConnected() {
+        return socket.isConnected();
+    }
 }

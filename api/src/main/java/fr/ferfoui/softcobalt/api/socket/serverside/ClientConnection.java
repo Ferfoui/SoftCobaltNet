@@ -74,4 +74,14 @@ public abstract class ClientConnection implements RequestProcessor, NetworkConne
         socket.close();
     }
 
+    /**
+     * Check if the connection is active
+     *
+     * @return True if the connection is active, false otherwise
+     */
+    @Override
+    public boolean isConnected() {
+        return socket.isConnected();
+    }
+
 }
