@@ -5,7 +5,8 @@ public enum HeaderPrincipalKeyword {
     STRING("string"),
     FILE("file"),
     PUBLIC_KEY("public_key"),
-    ASK_PUBLIC_KEY("need_a_key"),;
+    ASK_PUBLIC_KEY("need_a_key"),
+    PROBLEM("problem");
 
     private final String keyword;
 

@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
  * @author Ferfoui
  * @since 1.0
  */
-public class ClientSocketManager extends DataQueueSocketManager implements NetworkConnection<byte[]> {
+public class ClientSocketManager extends DataQueueSocketManager implements ClientNetworkConnection<byte[]> {
 
     private final Thread queueHandlerThread = new Thread(getQueueHandlerRunnable());
     private DataInputStream in;
@@ -48,6 +48,7 @@ public class ClientSocketManager extends DataQueueSocketManager implements Netwo
      * @param port The port of the server
      * @throws IOException If the connection cannot be established
      */
+    @Override
     public void startConnection(String ip, int port) throws IOException {
         logger.info("Starting connection to {}:{}", ip, port);
         socket = new Socket(ip, port);
@@ -88,7 +89,7 @@ public class ClientSocketManager extends DataQueueSocketManager implements Netwo
      * @throws IOException If the connection cannot be closed
      */
     @Override
-    public void close() throws IOException {
+    public void closeConnection() throws IOException {
         logger.info("Stopping connection");
         queueHandlerThread.interrupt();
         in.close();
