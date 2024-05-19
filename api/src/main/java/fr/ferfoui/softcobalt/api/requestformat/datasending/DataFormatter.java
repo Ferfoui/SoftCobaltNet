@@ -5,8 +5,6 @@ import fr.ferfoui.softcobalt.api.requestformat.header.Header;
 import fr.ferfoui.softcobalt.api.requestformat.header.HeaderPrincipalKeyword;
 import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
 
-import java.security.Key;
-
 public class DataFormatter implements RequestFormatter {
 
     /**
@@ -33,20 +31,6 @@ public class DataFormatter implements RequestFormatter {
         return createRequest(header, body.getBytes());
     }
 
-    /**
-     * Create a request with a public key body
-     *
-     * @param publicKey    the key that will be sent
-     * @param keyAlgorithm the algorithm of the key
-     * @return the request
-     */
-    @Override
-    public byte[] createPublicKeyRequest(Key publicKey, String keyAlgorithm) {
-        Header header = new Header(HeaderPrincipalKeyword.PUBLIC_KEY);
-        header.addSecondaryKeywords(RequestFormatConstants.KEY_ALGORITHM_KEYWORD + "=" + keyAlgorithm);
-
-        return createRequest(header, publicKey.getEncoded());
-    }
 
     /**
      * Create a request with a file body

@@ -1,8 +1,8 @@
 package fr.ferfoui.softcobalt.api.network;
 
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataFormatter;
+import fr.ferfoui.softcobalt.api.requestformat.datasending.DataReader;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.RequestFormatter;
-import fr.ferfoui.softcobalt.api.socket.clientside.ClientNetworkConnection;
 import fr.ferfoui.softcobalt.api.socket.clientside.SSLClientSocketManager;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -14,11 +14,13 @@ import java.nio.file.Files;
 
 public class CommunicationClient {
 
-    private final ClientNetworkConnection<byte[]> connection;
+    private final SSLClientSocketManager connection;
     private final Logger logger;
     private final RequestFormatter requestFormatter;
     private final String ip;
     private final int port;
+
+    private Thread queueHandlerThread;
 
     public CommunicationClient(String ip, int port, @Nullable Logger logger) {
         this.ip = ip;
@@ -38,16 +40,21 @@ public class CommunicationClient {
             } catch (IOException e) {
                 logger.error("Error while starting the communication", e);
             }
+
+            queueHandlerThread = new Thread(connection.getQueueHandlerRunnable());
         }
     }
 
     public void closeCommunication() {
         if (connection.isConnected()) {
+
             try {
                 connection.closeConnection();
             } catch (IOException e) {
                 logger.error("Error while closing the communication", e);
             }
+
+            queueHandlerThread.interrupt();
         }
     }
 
@@ -62,13 +69,31 @@ public class CommunicationClient {
     }
 
     public void sendFile(File file) {
+        startCommunication();
+
         try {
-            connection.startConnection(ip, port);
             connection.sendData(requestFormatter.createFileRequest(Files.readAllBytes(file.toPath()), file.getName()));
-            connection.closeConnection();
         } catch (IOException e) {
             logger.error("Error while sending the file", e);
         }
+    }
+
+    public byte[] readData() {
+        startCommunication();
+
+        byte[] data;
+        try {
+            data = connection.waitUntilDataAvailable();
+
+            DataReader dataReader = new DataReader(data);
+
+            return dataReader.getRequests().get(0).body();
+
+        } catch (IOException e) {
+            logger.error("Error while reading the data", e);
+        }
+
+        return null;
     }
 
 }

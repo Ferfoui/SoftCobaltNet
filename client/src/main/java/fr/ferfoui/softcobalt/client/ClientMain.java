@@ -17,11 +17,13 @@ public class ClientMain {
         CommunicationClient communicationClient = new CommunicationClient(SERVER_IP, Constants.SERVER_PORT, logger);
 
         for (int i = 0; i < 10; i++) {
-            String response;
-
             String message = "Hello from client " + i;
 
             communicationClient.sendText(message);
+
+            String response = new  String(communicationClient.readData());
+        
+            logger.info("Received response: {}", response);
         }
 
         String message = "exit";

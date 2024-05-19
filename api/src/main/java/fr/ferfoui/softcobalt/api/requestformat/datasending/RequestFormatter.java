@@ -24,15 +24,6 @@ public interface RequestFormatter {
     byte[] createStringRequest(String body);
 
     /**
-     * Create a request with a public key body
-     *
-     * @param publicKey    the key that will be sent
-     * @param keyAlgorithm the algorithm of the key
-     * @return the request
-     */
-    byte[] createPublicKeyRequest(Key publicKey, String keyAlgorithm);
-
-    /**
      * Create a request with a file body
      *
      * @param file     the file that will be sent

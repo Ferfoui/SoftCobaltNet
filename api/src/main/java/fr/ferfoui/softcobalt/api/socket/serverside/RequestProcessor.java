@@ -32,9 +32,9 @@ public interface RequestProcessor {
     boolean processRequest(byte[] availableData, Logger logger);
 
     /**
-     * Close the connection
+     * Close the data streams
      *
-     * @throws IOException If the connection cannot be closed
+     * @throws IOException If the data streams cannot be closed
      */
-    void close() throws IOException;
+    void closeDataStreams() throws IOException;
 }

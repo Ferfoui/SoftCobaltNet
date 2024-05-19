@@ -1,5 +1,6 @@
 package fr.ferfoui.softcobalt.api;
 
+
 /**
  * Constants used in the API
  *
@@ -35,5 +36,7 @@ public class ApiConstants {
 
         public static final String FILENAME_KEYWORD = "filename";
         public static final String KEY_ALGORITHM_KEYWORD = "key_algorithm";
+
+        public static final String DEFAULT_CHARSET = "UTF-8";
     }
 }

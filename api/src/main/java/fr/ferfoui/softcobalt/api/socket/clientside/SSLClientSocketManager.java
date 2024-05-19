@@ -72,7 +72,13 @@ public class SSLClientSocketManager extends DataQueueSocketManager implements Cl
         sslSocket.setEnabledProtocols(ApiConstants.SecurityConstants.SECURITY_PROTOCOLS);
         sslSocket.setEnabledCipherSuites(ApiConstants.SecurityConstants.CIPHER_SUITES);
 
-        //sslSocket.startHandshake();
+        try {
+            sslSocket.startHandshake();
+        } catch (IOException e) {
+            logger.error("Error while starting handshake", e);
+            sslSocket.close();
+            throw new RuntimeException("Error while starting handshake", e);
+        }
 
         return sslSocket;
     }
@@ -124,6 +130,9 @@ public class SSLClientSocketManager extends DataQueueSocketManager implements Cl
      */
     @Override
     public boolean isConnected() {
+        if (socket == null) {
+            return false;
+        }
         return socket.isConnected();
     }
 }

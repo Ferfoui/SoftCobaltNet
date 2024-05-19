@@ -2,6 +2,7 @@
   <configuration default="false" name="Client Main" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="fr.ferfoui.softcobalt.client.ClientMain" />
     <module name="SoftCobalt.client.main" />
+    <option name="VM_PARAMETERS" value="-Djavax.net.ssl.trustStore=E:\Users\kenji\Documents\certificates\softcobalttestkeystore.cert -Djavax.net.ssl.trustStorePassword=softcobalt" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run/client" />
     <extension name="coverage">
       <pattern>
