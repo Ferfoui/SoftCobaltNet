@@ -1,8 +1,7 @@
 package fr.ferfoui.softcobalt.api.socket.serverside;
 
-import org.slf4j.Logger;
-
 import java.io.IOException;
+import org.slf4j.Logger;
 
 /**
  * Interface used to process the requests from the client
@@ -16,32 +15,32 @@ import java.io.IOException;
  */
 public interface RequestProcessor {
 
-    /**
-     * Initialize the data streams to use
-     *
-     * @throws IOException If the data streams cannot be initialized
-     */
-    void initializeDataStreams() throws IOException;
+  /**
+   * Initialize the data streams to use
+   *
+   * @throws IOException If the data streams cannot be initialized
+   */
+  void initializeDataStreams() throws IOException;
 
-    /**
-     * Process the request
-     *
-     * @param availableData The data available to process
-     * @param logger        the logger to use
-     */
-    void processRequest(byte[] availableData, Logger logger);
+  /**
+   * Process the request
+   *
+   * @param availableData The data available to process
+   * @param logger        the logger to use
+   */
+  void processRequest(byte[] availableData, Logger logger);
 
-    /**
-     * Close the data streams
-     *
-     * @throws IOException If the data streams cannot be closed
-     */
-    void closeDataStreams() throws IOException;
+  /**
+   * Close the data streams
+   *
+   * @throws IOException If the data streams cannot be closed
+   */
+  void closeDataStreams() throws IOException;
 
-    /**
-     * Return if the server should continue listening for requests
-     *
-     * @return true if the server should continue listening for requests
-     */
-    boolean doContinueListening();
+  /**
+   * Return if the server should continue listening for requests
+   *
+   * @return true if the server should continue listening for requests
+   */
+  boolean doContinueListening();
 }

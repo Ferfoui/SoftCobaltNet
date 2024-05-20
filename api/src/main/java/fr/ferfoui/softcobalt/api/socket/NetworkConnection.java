@@ -9,34 +9,33 @@ import java.io.IOException;
  */
 public interface NetworkConnection<T> {
 
-    /**
-     * Read data from the connection
-     *
-     * @return The data read
-     * @throws IOException If the data cannot be read
-     */
-    T readData() throws IOException;
+  /**
+   * Read data from the connection
+   *
+   * @return The data read
+   * @throws IOException If the data cannot be read
+   */
+  T readData() throws IOException;
 
-    /**
-     * Send data to the connection
-     *
-     * @param data The data to send
-     * @throws IOException If the data cannot be sent
-     */
-    void sendData(T data) throws IOException;
+  /**
+   * Send data to the connection
+   *
+   * @param data The data to send
+   * @throws IOException If the data cannot be sent
+   */
+  void sendData(T data) throws IOException;
 
-    /**
-     * Close the connection
-     *
-     * @throws IOException If the connection cannot be closed
-     */
-    void closeConnection() throws IOException;
+  /**
+   * Close the connection
+   *
+   * @throws IOException If the connection cannot be closed
+   */
+  void closeConnection() throws IOException;
 
-    /**
-     * Check if the connection is active
-     *
-     * @return True if the connection is active, false otherwise
-     */
-    boolean isConnected();
-
+  /**
+   * Check if the connection is active
+   *
+   * @return True if the connection is active, false otherwise
+   */
+  boolean isConnected();
 }
