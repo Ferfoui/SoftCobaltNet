@@ -12,6 +12,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+/**
+ * This class is responsible for managing the communication with the server.
+ * It uses SSL for secure communication.
+ */
 public class CommunicationClient {
 
     private final SSLClientSocketManager connection;
@@ -22,6 +26,13 @@ public class CommunicationClient {
 
     private Thread queueHandlerThread;
 
+    /**
+     * Constructor for the CommunicationClient
+     *
+     * @param ip     The ip of the server to connect to
+     * @param port   The port of the server to connect to
+     * @param logger The logger to use, if null, a new logger will be created
+     */
     public CommunicationClient(String ip, int port, @Nullable Logger logger) {
         this.ip = ip;
         this.port = port;
@@ -33,6 +44,10 @@ public class CommunicationClient {
         this.requestFormatter = new DataFormatter();
     }
 
+    /**
+     * Starts the communication with the server.
+     * If the client is not already connected, it will attempt to connect.
+     */
     public void startCommunication() {
         if (!connection.isConnected()) {
             try {
@@ -45,6 +60,10 @@ public class CommunicationClient {
         }
     }
 
+    /**
+     * Closes the communication with the server.
+     * If the client is connected, it will attempt to close the connection.
+     */
     public void closeCommunication() {
         if (connection.isConnected()) {
 
