@@ -1,5 +1,7 @@
 package fr.ferfoui.softcobalt.api.requestformat;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,9 +139,10 @@ public class BytesUtils {
      * If the smaller byte array is not found within the larger byte array, the method returns an empty list.
      */
     public static List<Integer> indexesOf(byte[] outerArray, byte[] smallerArray) {
-        List<Integer> indexes = new ArrayList<>();
 
-        if (smallerArray.length == 0) return indexes;
+        if (smallerArray.length == 0) return new ArrayList<>(0);
+
+        List<Integer> indexes = new ArrayList<>();
         // Iterate over the outer array up to the point where the smaller array could still fully fit
         for (int i = 0; i < (outerArray.length - smallerArray.length + 1); ++i) {
             boolean found = true;
@@ -173,6 +176,7 @@ public class BytesUtils {
      * @param suffix The suffix to delete from the string. This should be non-null.
      * @return The string extracted from the byte array, or null if the prefix or suffix is not found.
      */
+    @Nullable
     public static String extractStringFromByteArray(byte[] data, String prefix, String suffix) {
         String dataString = new String(data, StandardCharsets.UTF_8);
 
