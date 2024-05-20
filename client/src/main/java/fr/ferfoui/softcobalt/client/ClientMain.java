@@ -21,7 +21,7 @@ public class ClientMain {
 
             communicationClient.sendText(message);
 
-            String response = new  String(communicationClient.readData());
+            String response = new String(communicationClient.readData());
         
             logger.info("Received response: {}", response);
         }
