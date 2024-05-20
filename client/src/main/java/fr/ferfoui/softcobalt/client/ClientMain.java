@@ -7,29 +7,29 @@ import org.slf4j.LoggerFactory;
 
 public class ClientMain {
 
-    private static final String SERVER_IP = "127.0.0.1";
+  private static final String SERVER_IP = "127.0.0.1";
 
-    private static final Logger logger = LoggerFactory.getLogger(ClientMain.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(ClientMain.class);
 
+  public static void main(String[] args) {
 
-    public static void main(String[] args) {
+    CommunicationClient communicationClient =
+        new CommunicationClient(SERVER_IP, Constants.SERVER_PORT, logger);
 
-        CommunicationClient communicationClient = new CommunicationClient(SERVER_IP, Constants.SERVER_PORT, logger);
+    for (int i = 0; i < 10; i++) {
+      String message = "Hello from client " + i;
 
-        for (int i = 0; i < 10; i++) {
-            String message = "Hello from client " + i;
+      communicationClient.sendText(message);
 
-            communicationClient.sendText(message);
+      String response = new String(communicationClient.readData());
 
-            String response = new String(communicationClient.readData());
-        
-            logger.info("Received response: {}", response);
-        }
-
-        String message = "exit";
-
-        communicationClient.sendText(message);
-        communicationClient.closeCommunication();
+      logger.info("Received response: {}", response);
     }
 
+    String message = "exit";
+
+    communicationClient.sendText(message);
+    communicationClient.closeCommunication();
+  }
 }
