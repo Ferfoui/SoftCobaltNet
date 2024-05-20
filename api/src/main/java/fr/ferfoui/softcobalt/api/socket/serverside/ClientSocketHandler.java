@@ -75,8 +75,8 @@ public class ClientSocketHandler
       clientConnection.closeDataStreams();
       logger.info("Client-{} disconnected", clientId);
     } catch (IOException e) {
-      logger.error("Exception caught when trying to listen on port {} or " +
-                   "listening for a connection",
+      logger.error("Exception caught when trying to listen on port {} or "
+                       + "listening for a connection",
                    socket.getPort(), e);
     }
   }
