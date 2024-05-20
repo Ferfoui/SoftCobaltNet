@@ -1,5 +1,6 @@
 package fr.ferfoui.softcobalt.api;
 
+
 /**
  * Constants used in the API
  *
@@ -12,6 +13,9 @@ public class ApiConstants {
      * Constants related to security
      */
     public static class SecurityConstants {
+        public static final String[] SECURITY_PROTOCOLS = new String[]{"TLSv1.3"};
+        public static final String[] CIPHER_SUITES = new String[]{"TLS_AES_128_GCM_SHA256"};
+
         public static final String RSA_ALGORITHM = "RSA";
     }
 
@@ -32,5 +36,7 @@ public class ApiConstants {
 
         public static final String FILENAME_KEYWORD = "filename";
         public static final String KEY_ALGORITHM_KEYWORD = "key_algorithm";
+
+        public static final String DEFAULT_CHARSET = "UTF-8";
     }
 }

@@ -47,7 +47,9 @@ public abstract class DataQueueSocketManager {
                     System.arraycopy(buffer, 0, data, 0, bytesRead);
                     queue.put(data);
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (InterruptedException e) {
+                logger.info("Queue handler has been interrupted");
+            } catch (IOException e) {
                 if (!socket.isClosed()) {
                     logger.error("Error while reading data", e);
                 } else {

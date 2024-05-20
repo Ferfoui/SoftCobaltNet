@@ -52,7 +52,7 @@ public abstract class ClientConnection implements RequestProcessor, NetworkConne
     /**
      * Receive bytes from the client
      *
-     * @return The bytes received
+     * @return The received bytes
      * @throws IOException If the bytes cannot be received
      */
     @Override
@@ -63,15 +63,35 @@ public abstract class ClientConnection implements RequestProcessor, NetworkConne
     }
 
     /**
+     * Close the data streams
+     *
+     * @throws IOException If the data streams cannot be closed
+     */
+    @Override
+    public void closeDataStreams() throws IOException {
+        in.close();
+        out.close();
+    }
+
+    /**
      * Close the connection
      *
      * @throws IOException If the connection cannot be closed
      */
     @Override
     public void closeConnection() throws IOException {
-        in.close();
-        out.close();
+        closeDataStreams();
         socket.close();
+    }
+
+    /**
+     * Check if the connection is active
+     *
+     * @return True if the connection is active, false otherwise
+     */
+    @Override
+    public boolean isConnected() {
+        return socket.isConnected();
     }
 
 }

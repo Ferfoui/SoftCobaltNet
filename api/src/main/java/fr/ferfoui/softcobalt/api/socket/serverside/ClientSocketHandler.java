@@ -61,11 +61,12 @@ public class ClientSocketHandler extends DataQueueSocketManager implements Runna
 
             while (doContinueListening) {
                 byte[] availableData = waitUntilDataAvailable();
-                doContinueListening = clientConnection.processRequest(availableData, logger);
+                clientConnection.processRequest(availableData, logger);
+                doContinueListening = clientConnection.doContinueListening();
                 logger.debug("The server should continue listening: {}", doContinueListening);
             }
 
-            clientConnection.close();
+            clientConnection.closeDataStreams();
             logger.info("Client-{} disconnected", clientId);
         } catch (IOException e) {
             logger.error("Exception caught when trying to listen on port {} or listening for a connection", socket.getPort(), e);

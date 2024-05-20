@@ -1,57 +1,31 @@
 package fr.ferfoui.softcobalt.server;
 
 import fr.ferfoui.softcobalt.api.ApiConstants;
-import fr.ferfoui.softcobalt.api.security.key.AsymmetricKeysManager;
-import fr.ferfoui.softcobalt.api.security.key.RsaKeysManager;
+import fr.ferfoui.softcobalt.api.requestformat.datasending.DataFormatter;
+import fr.ferfoui.softcobalt.api.requestformat.datasending.DataReader;
+import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
 import fr.ferfoui.softcobalt.api.socket.serverside.ClientConnection;
 import fr.ferfoui.softcobalt.api.socket.serverside.ServerSocketManager;
 import fr.ferfoui.softcobalt.common.Constants;
-import fr.ferfoui.softcobalt.common.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
-import java.security.GeneralSecurityException;
 
 public class SocketServerThread extends Thread {
 
     private final ServerSocketManager serverSocketManager;
 
-    private final AsymmetricKeysManager rsaKeysManager = new RsaKeysManager();
-
     private final Logger logger = LoggerFactory.getLogger("SocketServerThread");
 
     SocketServerThread() {
         super("SocketServerThread");
-        serverSocketManager = new ServerSocketManager("server-socket", NiceRequestProcessor::new);
+        serverSocketManager = new ServerSocketManager("server-socket", StringProcessServer::new);
     }
 
     @Override
     public void run() {
-
-        File privateKeyFile = new File(Constants.PRIVATE_KEY_FILE);
-        File publicKeyFile = new File(Constants.PUBLIC_KEY_FILE);
-
-        // If the keys don't exist, generate them and save them to files or if they exist, load them from files
-        if (!privateKeyFile.exists() || !publicKeyFile.exists()) {
-            try {
-                logger.info("Generating RSA keys");
-                rsaKeysManager.generateKeys();
-                rsaKeysManager.saveKeysToFiles(publicKeyFile, privateKeyFile);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            try {
-                logger.info("Loading RSA keys from files");
-                rsaKeysManager.loadKeysFromFiles(publicKeyFile, privateKeyFile);
-            } catch (IOException | GeneralSecurityException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         // Start the server
         try {
             serverSocketManager.start(Constants.SERVER_PORT);
@@ -60,7 +34,8 @@ public class SocketServerThread extends Thread {
         }
     }
 
-    public void stopServer() {
+    public synchronized void stopServer() {
+        logger.info("Stopping server");
         try {
             serverSocketManager.stop();
         } catch (IOException e) {
@@ -69,47 +44,71 @@ public class SocketServerThread extends Thread {
     }
 
     public boolean isClientHandlersTerminated() {
+        logger.debug("Checking if client handlers are terminated");
         return serverSocketManager.isClientHandlersTerminated();
     }
 
 
-    private class NiceRequestProcessor extends ClientConnection {
+    private class StringProcessServer extends ClientConnection {
+
+        private final DataFormatter dataFormatter = new DataFormatter();
+
+        private boolean doContinueListening = true;
+
         /**
          * Constructor for the ClientConnection.
          *
          * @param socket   The socket to handle
          * @param clientId The id of the client
          */
-        public NiceRequestProcessor(Socket socket, long clientId) {
+        public StringProcessServer(Socket socket, long clientId) {
             super(socket, clientId);
         }
 
+        /**
+         * Process the request
+         *
+         * @param availableData The data available to process
+         * @param logger        The logger to use
+         */
         @Override
-        public boolean processRequest(byte[] availableData, Logger logger) {
+        public void processRequest(byte[] availableData, Logger logger) {
+            String requestString = null;
             try {
-                logger.info("Received request: {}", availableData);
+                logger.info("Received data: {}", availableData);
+                DataReader dataReader = new DataReader(availableData);
 
-                if (!Utils.isBase64(request)) {
-                    logger.info("Request is not encoded, sending public key");
-                    sendPublicKey();
-                } else {
-                    String decryptedRequest = decryptRequest(request);
+                DataRequest request = dataReader.getRequests().get(0);
+                requestString = new String(request.body(), ApiConstants.RequestFormatConstants.DEFAULT_CHARSET);
 
-                    logger.info("Decoded request: {}", decryptedRequest);
-
-                    String encryptedResponse = RequestFormatting.encryptAndEncodeToString("Server response for: '" + decryptedRequest + "'", rsaKeysManager.getPrivateKey(), ApiConstants.SecurityConstants.RSA_ALGORITHM);
-                    logger.info("Sending encrypted response: {}", encryptedResponse);
-                    out.writeUTF(encryptedResponse);
-                    request = decryptedRequest;
-                }
+                logger.info("Received request: '{}'", requestString);
 
             } catch (IOException e) {
                 logger.error("Error reading request", e);
-            } catch (GeneralSecurityException e) {
-                logger.error("Error decrypting request", e);
             }
-            return request != null && !request.equals("exit");
+
+            try {
+                String response = "Server response for: '" + requestString + "'";
+                sendData(dataFormatter.createStringRequest(response));
+            } catch (IOException e) {
+                logger.error("Error sending response", e);
+            }
+
+            if (requestString != null && requestString.contains("exit")) {
+                serverSocketManager.stopClientHandlers();
+            }
+
+            doContinueListening = requestString != null && !requestString.contains("exit");
         }
 
+        /**
+         * Return if the server should continue listening for requests
+         *
+         * @return true if the server should continue listening for requests
+         */
+        @Override
+        public boolean doContinueListening() {
+            return this.doContinueListening;
+        }
     }
 }

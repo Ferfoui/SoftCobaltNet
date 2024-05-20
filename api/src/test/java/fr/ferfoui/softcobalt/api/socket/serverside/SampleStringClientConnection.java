@@ -54,6 +54,16 @@ public class SampleStringClientConnection extends ClientConnection {
         return !body.isEmpty() && !body.equals(EXIT_COMMAND);
     }
 
+    /**
+     * Return if the server should continue listening for requests
+     *
+     * @return true if the server should continue listening for requests
+     */
+    @Override
+    public boolean doContinueListening() {
+        return false;
+    }
+
     private String readStringBody(DataRequest request) {
         return new String(request.body());
     }

@@ -19,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
  * The decryption is done using the key and the algorithm associated with it.
  * The decryption is done using the {@link EncryptDecryptCipher#decrypt(byte[], Key, String)} method.
  */
+@Deprecated
 public class SecureDataReader implements SecureExchanger {
 
     private Key key;

@@ -1,7 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Server Main" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="openjdk-21" />
     <option name="MAIN_CLASS_NAME" value="fr.ferfoui.softcobalt.server.ServerMain" />
     <module name="SoftCobalt.server.main" />
+    <option name="VM_PARAMETERS" value="-Djavax.net.ssl.keyStore=E:\Users\kenji\Documents\certificates\softcobalttest.jks -Djavax.net.ssl.keyStorePassword=softcobalt" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/run/server" />
     <extension name="coverage">
       <pattern>
