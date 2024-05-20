@@ -61,7 +61,8 @@ public class ClientSocketHandler extends DataQueueSocketManager implements Runna
 
             while (doContinueListening) {
                 byte[] availableData = waitUntilDataAvailable();
-                doContinueListening = clientConnection.processRequest(availableData, logger);
+                clientConnection.processRequest(availableData, logger);
+                doContinueListening = clientConnection.doContinueListening();
                 logger.debug("The server should continue listening: {}", doContinueListening);
             }
 

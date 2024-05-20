@@ -14,6 +14,7 @@ public class ServerMain {
         }
 
         serverThread.stopServer();
+        serverThread.interrupt();
     }
 
 

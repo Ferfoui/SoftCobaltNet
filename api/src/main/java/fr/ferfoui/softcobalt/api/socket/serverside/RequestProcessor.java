@@ -24,12 +24,12 @@ public interface RequestProcessor {
     void initializeDataStreams() throws IOException;
 
     /**
-     * Process the request and return true if the server should continue listening for requests
+     * Process the request
      *
-     * @param logger the logger to use
-     * @return true if the server should continue listening for requests
+     * @param availableData The data available to process
+     * @param logger        the logger to use
      */
-    boolean processRequest(byte[] availableData, Logger logger);
+    void processRequest(byte[] availableData, Logger logger);
 
     /**
      * Close the data streams
@@ -37,4 +37,11 @@ public interface RequestProcessor {
      * @throws IOException If the data streams cannot be closed
      */
     void closeDataStreams() throws IOException;
+
+    /**
+     * Return if the server should continue listening for requests
+     *
+     * @return true if the server should continue listening for requests
+     */
+    boolean doContinueListening();
 }

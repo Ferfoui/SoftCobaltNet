@@ -10,6 +10,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -105,7 +106,7 @@ public class ServerSocketManager {
      *
      * @throws IOException If the server socket cannot be closed
      */
-    public synchronized void stop() throws IOException {
+    public void stop() throws IOException {
         logger.info("Shutting down Socket server");
         doContinueAccept = false;
         stopClientHandlers();
@@ -118,6 +119,10 @@ public class ServerSocketManager {
     public void stopClientHandlers() {
         logger.info("Shutting down client handlers");
         clientHandlersExecutor.shutdown();
+    }
+
+    public void stopClientHandlersNow() {
+        logger.info("Shutting down client handlers now");
     }
 
     /**
