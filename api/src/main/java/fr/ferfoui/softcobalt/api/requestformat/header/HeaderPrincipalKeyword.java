@@ -3,6 +3,7 @@ package fr.ferfoui.softcobalt.api.requestformat.header;
 public enum HeaderPrincipalKeyword {
     NONE("none"),
     STRING("string"),
+    INSTRUCTIONS("instructions"),
     FILE("file"),
     PUBLIC_KEY("public_key"),
     ASK_PUBLIC_KEY("need_a_key"),

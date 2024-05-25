@@ -3,12 +3,14 @@ package fr.ferfoui.softcobalt.api.requestformat.datasending;
 import fr.ferfoui.softcobalt.api.ApiConstants.RequestFormatConstants;
 import fr.ferfoui.softcobalt.api.requestformat.header.Header;
 import fr.ferfoui.softcobalt.api.requestformat.header.HeaderPrincipalKeyword;
+import fr.ferfoui.softcobalt.api.requestformat.instruction.Instructions;
 import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
+import org.apache.commons.lang3.SerializationUtils;
 
 public class DataFormatter implements RequestFormatter {
 
     /**
-     * Create a request with a header and a body
+     * Create a request with a header and a body, see {@link fr.ferfoui.softcobalt.api.requestformat.request.DataRequest}
      *
      * @param header the header of the request
      * @param body   the body of the request
@@ -20,7 +22,7 @@ public class DataFormatter implements RequestFormatter {
     }
 
     /**
-     * Create a request with a string body
+     * Create a request with a {@link java.lang.String} body
      *
      * @param body the body of the request
      * @return the request
@@ -30,7 +32,6 @@ public class DataFormatter implements RequestFormatter {
         Header header = new Header(HeaderPrincipalKeyword.STRING);
         return createRequest(header, body.getBytes());
     }
-
 
     /**
      * Create a request with a file body
@@ -46,5 +47,16 @@ public class DataFormatter implements RequestFormatter {
         return createRequest(header, file);
     }
 
+    /**
+     * Create a request with {@link fr.ferfoui.softcobalt.api.requestformat.instruction.Instructions} body
+     *
+     * @param instructions the instructions that will be sent
+     * @return the request
+     */
+    @Override
+    public byte[] createInstructionRequest(Instructions instructions) {
+        Header header = new Header(HeaderPrincipalKeyword.INSTRUCTIONS);
+        return createRequest(header, SerializationUtils.serialize(instructions));
+    }
 
 }
