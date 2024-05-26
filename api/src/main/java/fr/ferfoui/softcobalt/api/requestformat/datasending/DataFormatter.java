@@ -54,7 +54,7 @@ public class DataFormatter implements RequestFormatter {
      * @return the request
      */
     @Override
-    public byte[] createInstructionRequest(Instructions instructions) {
+    public byte[] createInstructionsRequest(Instructions instructions) {
         Header header = new Header(HeaderPrincipalKeyword.INSTRUCTIONS);
         return createRequest(header, SerializationUtils.serialize(instructions));
     }

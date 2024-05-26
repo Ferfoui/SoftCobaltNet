@@ -1,6 +1,8 @@
 package fr.ferfoui.softcobalt.api.socket.serverside;
 
 import fr.ferfoui.softcobalt.api.ApiConstants;
+import fr.ferfoui.softcobalt.api.socket.serverside.clientconnection.ClientConnection;
+import fr.ferfoui.softcobalt.api.socket.serverside.clientconnection.ClientConnectionProvider;
 import fr.ferfoui.softcobalt.api.socket.serverside.thread.ServerThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +12,6 @@ import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

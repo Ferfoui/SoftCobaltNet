@@ -63,12 +63,13 @@ public abstract class DataQueueSocketManager {
      * Wait until data is available in the queue
      *
      * @return The available data in the queue
+     * @throws IOException If an error occurs while waiting for data
      */
     public byte[] waitUntilDataAvailable() throws IOException {
         try {
             return queue.take(); // This will block until data is available
         } catch (InterruptedException e) {
-            logger.error("Error while waiting for data", e);
+            logger.error("The queue handler thread has been interrupted", e);
             return null;
         }
     }

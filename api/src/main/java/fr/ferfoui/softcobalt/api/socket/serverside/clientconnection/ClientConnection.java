@@ -1,6 +1,7 @@
-package fr.ferfoui.softcobalt.api.socket.serverside;
+package fr.ferfoui.softcobalt.api.socket.serverside.clientconnection;
 
 import fr.ferfoui.softcobalt.api.socket.NetworkConnection;
+import fr.ferfoui.softcobalt.api.socket.serverside.RequestProcessor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedInputStream;

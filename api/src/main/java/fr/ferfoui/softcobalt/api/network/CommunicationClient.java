@@ -3,6 +3,8 @@ package fr.ferfoui.softcobalt.api.network;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataFormatter;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataReader;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.RequestFormatter;
+import fr.ferfoui.softcobalt.api.requestformat.instruction.Instructions;
+import fr.ferfoui.softcobalt.api.requestformat.instruction.SendingFileInstructions;
 import fr.ferfoui.softcobalt.api.socket.clientside.SSLClientSocketManager;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -77,6 +79,11 @@ public class CommunicationClient {
         }
     }
 
+    /**
+     * Sends a {@link String} to the server
+     *
+     * @param text The text to send
+     */
     public void sendText(String text) {
         startCommunication();
 
@@ -87,22 +94,48 @@ public class CommunicationClient {
         }
     }
 
-    public void sendFile(File file) {
+    /**
+     * Sends multiple files to the server
+     *
+     * @param directoryPath The path of the directory where the files are stored on the server
+     * @param files         The files to send
+     */
+    public void sendMultipleFiles(String directoryPath, File... files) {
         startCommunication();
 
+        Instructions fileInstructions = new SendingFileInstructions(directoryPath);
+
         try {
-            connection.sendData(requestFormatter.createFileRequest(Files.readAllBytes(file.toPath()), file.getName()));
+            connection.sendData(requestFormatter.createInstructionsRequest(fileInstructions));
         } catch (IOException e) {
-            logger.error("Error while sending the file", e);
+            logger.error("Error while sending the file instructions", e);
+        }
+
+        try {
+            byte[] response = connection.waitUntilDataAvailable();
+            DataReader dataReader = new DataReader(response);
+        } catch (IOException e) {
+            logger.error("Error while waiting for the server to be ready", e);
+        }
+
+        try {
+            for (File file : files)
+                connection.sendData(requestFormatter.createFileRequest(Files.readAllBytes(file.toPath()), file.getName()));
+        } catch (IOException e) {
+            logger.error("Error while sending the files", e);
         }
     }
 
+    /**
+     * Reads the data from the server
+     *
+     * @return The data read
+     */
     public byte[] readData() {
         startCommunication();
 
-        byte[] data;
         try {
-            data = connection.waitUntilDataAvailable();
+            byte[] data = connection.waitUntilDataAvailable();
 
             DataReader dataReader = new DataReader(data);
 

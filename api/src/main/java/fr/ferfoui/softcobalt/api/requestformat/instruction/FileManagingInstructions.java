@@ -7,6 +7,11 @@ public interface FileManagingInstructions extends Instructions {
         return InstructionObject.GOING_TO_SEND_FILES;
     }
 
+    /**
+     * Returns the path of the directory where the files are stored.
+     *
+     * @return The path of the directory where the files are stored.
+     */
     String getDirectoryPath();
 
 }

@@ -3,6 +3,7 @@ package fr.ferfoui.softcobalt.api.socket.serverside;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataFormatter;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataReader;
 import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
+import fr.ferfoui.softcobalt.api.socket.serverside.clientconnection.ClientConnection;
 import org.slf4j.Logger;
 
 import java.io.IOException;

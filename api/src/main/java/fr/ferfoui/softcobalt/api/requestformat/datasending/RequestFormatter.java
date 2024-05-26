@@ -37,5 +37,5 @@ public interface RequestFormatter {
      * @param instructions the instructions that will be sent
      * @return the request
      */
-    byte[] createInstructionRequest(Instructions instructions);
+    byte[] createInstructionsRequest(Instructions instructions);
 }

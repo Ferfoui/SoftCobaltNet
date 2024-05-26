@@ -4,7 +4,7 @@ import fr.ferfoui.softcobalt.api.ApiConstants;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataFormatter;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataReader;
 import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
-import fr.ferfoui.softcobalt.api.socket.serverside.ClientConnection;
+import fr.ferfoui.softcobalt.api.socket.serverside.clientconnection.ClientConnection;
 import fr.ferfoui.softcobalt.api.socket.serverside.ServerSocketManager;
 import fr.ferfoui.softcobalt.common.Constants;
 import org.slf4j.Logger;

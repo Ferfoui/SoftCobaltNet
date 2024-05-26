@@ -1,4 +1,4 @@
-package fr.ferfoui.softcobalt.api.socket.serverside;
+package fr.ferfoui.softcobalt.api.socket.serverside.clientconnection;
 
 import java.net.Socket;
 
