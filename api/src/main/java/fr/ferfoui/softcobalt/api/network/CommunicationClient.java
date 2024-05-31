@@ -3,6 +3,7 @@ package fr.ferfoui.softcobalt.api.network;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataFormatter;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataReader;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.RequestFormatter;
+import fr.ferfoui.softcobalt.api.requestformat.header.HeaderPrincipalKeyword;
 import fr.ferfoui.softcobalt.api.requestformat.instruction.Instructions;
 import fr.ferfoui.softcobalt.api.requestformat.instruction.SendingFileInstructions;
 import fr.ferfoui.softcobalt.api.socket.clientside.SSLClientSocketManager;
@@ -114,6 +115,10 @@ public class CommunicationClient {
         try {
             byte[] response = connection.waitUntilDataAvailable();
             DataReader dataReader = new DataReader(response);
+            if (HeaderPrincipalKeyword.NO_PROBLEM.isKeywordMatching(dataReader.getRequests().get(0).header().getPrincipalKeyword())) {
+                logger.error("Error while sending the file instructions");
+                return;
+            }
         } catch (IOException e) {
             logger.error("Error while waiting for the server to be ready", e);
         }
