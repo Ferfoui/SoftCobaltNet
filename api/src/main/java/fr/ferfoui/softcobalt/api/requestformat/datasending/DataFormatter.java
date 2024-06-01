@@ -6,6 +6,9 @@ import fr.ferfoui.softcobalt.api.requestformat.header.HeaderPrincipalKeyword;
 import fr.ferfoui.softcobalt.api.requestformat.instruction.Instructions;
 import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
 import org.apache.commons.lang3.SerializationUtils;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class DataFormatter implements RequestFormatter {
 
@@ -38,12 +41,17 @@ public class DataFormatter implements RequestFormatter {
      *
      * @param file     the file that will be sent
      * @param fileName the name of the file
+     * @param uuid     the UUID of the file, which can be null
      * @return the request
      */
     @Override
-    public byte[] createFileRequest(byte[] file, String fileName) {
+    public byte[] createFileRequest(byte[] file, String fileName, @Nullable UUID uuid) {
         Header header = new Header(HeaderPrincipalKeyword.FILE);
         header.addSecondaryKeywords(RequestFormatConstants.FILENAME_KEYWORD + "=" + fileName);
+
+        String uuidString = (uuid == null) ? "null" : uuid.toString();
+        header.addSecondaryKeywords(RequestFormatConstants.UUID_KEYWORD + "=" + uuidString);
+
         return createRequest(header, file);
     }
 

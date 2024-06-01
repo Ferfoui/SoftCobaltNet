@@ -2,6 +2,9 @@ package fr.ferfoui.softcobalt.api.requestformat.datasending;
 
 import fr.ferfoui.softcobalt.api.requestformat.header.Header;
 import fr.ferfoui.softcobalt.api.requestformat.instruction.Instructions;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public interface RequestFormatter {
 
@@ -27,9 +30,10 @@ public interface RequestFormatter {
      *
      * @param file     the file that will be sent
      * @param fileName the name of the file
+     * @param uuid     the UUID of the file, which can be null
      * @return the request
      */
-    byte[] createFileRequest(byte[] file, String fileName);
+    byte[] createFileRequest(byte[] file, String fileName, @Nullable UUID uuid);
 
     /**
      * Create a request with an {@link fr.ferfoui.softcobalt.api.requestformat.instruction.Instructions} body

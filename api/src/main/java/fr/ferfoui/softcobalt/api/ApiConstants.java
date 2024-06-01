@@ -35,6 +35,7 @@ public class ApiConstants {
         public static final String PUBLIC_KEY_SUFFIX = REQUEST_SUB_SPLITTER + "end_public_key";
 
         public static final String FILENAME_KEYWORD = "filename";
+        public static final String UUID_KEYWORD = "uuid";
         public static final String KEY_ALGORITHM_KEYWORD = "key_algorithm";
 
         public static final String DEFAULT_CHARSET = "UTF-8";

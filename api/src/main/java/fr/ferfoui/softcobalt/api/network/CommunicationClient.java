@@ -124,8 +124,10 @@ public class CommunicationClient {
         }
 
         try {
-            for (File file : files)
-                connection.sendData(requestFormatter.createFileRequest(Files.readAllBytes(file.toPath()), file.getName()));
+            for (File file : files) {
+                byte[] fileRequest = requestFormatter.createFileRequest(Files.readAllBytes(file.toPath()), file.getName(), fileInstructions.getUUID());
+                connection.sendData(fileRequest);
+            }
         } catch (IOException e) {
             logger.error("Error while sending the files", e);
         }
