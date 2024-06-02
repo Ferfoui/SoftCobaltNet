@@ -12,7 +12,6 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Class used to manage the client socket connection.
@@ -91,7 +90,6 @@ public class SSLClientSocketManager extends DataQueueSocketManager implements Cl
      */
     @Override
     public void sendData(byte[] bytesToSend) throws IOException {
-        logger.info("Sending bytes: {}", new String(bytesToSend, StandardCharsets.UTF_8));
         out.write(bytesToSend);
     }
 
@@ -105,7 +103,6 @@ public class SSLClientSocketManager extends DataQueueSocketManager implements Cl
     public byte[] readData() throws IOException {
         byte[] bytesReceived = new byte[in.available()];
         in.readFully(bytesReceived);
-        logger.info("Received bytes: {}", new String(bytesReceived, StandardCharsets.UTF_8));
         return bytesReceived;
     }
 
@@ -116,7 +113,6 @@ public class SSLClientSocketManager extends DataQueueSocketManager implements Cl
      */
     @Override
     public void closeConnection() throws IOException {
-        logger.info("Stopping connection");
         queueHandlerThread.interrupt();
         in.close();
         out.close();

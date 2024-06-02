@@ -25,7 +25,8 @@ public class ApiConstants {
     public static class RequestFormatConstants {
         public static final String REQUEST_SUB_SPLITTER = ":::";
         public static final String KEYWORD_SPLITTER = "|";
-        public static final String KEYWORD_SUB_SPLITTER = "-";
+        public static final String KEYWORD_SUB_SPLITTER = ";";
+        public static final String KEYWORD_VALUE_SPLITTER = "=";
 
         public static final String HEADER_PREFIX = "start_header" + REQUEST_SUB_SPLITTER;
         public static final String HEADER_SUFFIX = REQUEST_SUB_SPLITTER + "end_header";

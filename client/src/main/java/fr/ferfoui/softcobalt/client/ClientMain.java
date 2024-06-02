@@ -17,7 +17,7 @@ public class ClientMain {
 
     public static void main(String[] args) {
 
-        /*FileCollector fileCollector = new FileCollector("");
+        FileCollector fileCollector = new FileCollector("");
 
         try {
             fileCollector.collectFiles();
@@ -27,10 +27,11 @@ public class ClientMain {
 
         logger.info("Files collected from directory: {}", fileCollector.getDirectory());
         fileCollector.getFilePaths().forEach(path -> logger.info("File: {}", path.toString()));
-        */
+
+
         CommunicationClient communicationClient = new CommunicationClient(SERVER_IP, Constants.SERVER_PORT, logger);
 
-        for (int i = 0; i < 10; i++) {
+        /*for (int i = 0; i < 10; i++) {
             String message = "Hello from client " + i;
 
             communicationClient.sendText(message);
@@ -38,7 +39,11 @@ public class ClientMain {
             String response = new String(communicationClient.readData());
         
             logger.info("Received response: {}", response);
-        }
+        }*/
+
+        communicationClient.sendMultipleFiles("test", fileCollector.getFilePaths());
+
+
 
         String message = "exit";
 

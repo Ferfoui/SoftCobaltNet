@@ -11,9 +11,10 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 /**
  * This class is responsible for managing the communication with the server.
@@ -99,15 +100,16 @@ public class CommunicationClient {
      * Sends multiple files to the server
      *
      * @param directoryPath The path of the directory where the files are stored on the server
-     * @param files         The files to send
+     * @param filePaths     The paths of the files to send
      */
-    public void sendMultipleFiles(String directoryPath, File... files) {
+    public void sendMultipleFiles(String directoryPath, List<Path> filePaths) {
         startCommunication();
 
         Instructions fileInstructions = new SendingFileInstructions(directoryPath);
 
         try {
             connection.sendData(requestFormatter.createInstructionsRequest(fileInstructions));
+            logger.info("Sent the file instructions");
         } catch (IOException e) {
             logger.error("Error while sending the file instructions", e);
         }
@@ -115,7 +117,7 @@ public class CommunicationClient {
         try {
             byte[] response = connection.waitUntilDataAvailable();
             DataReader dataReader = new DataReader(response);
-            if (HeaderPrincipalKeyword.NO_PROBLEM.isKeywordMatching(dataReader.getRequests().get(0).header().getPrincipalKeyword())) {
+            if (!HeaderPrincipalKeyword.NO_PROBLEM.isKeywordMatching(dataReader.getRequests().get(0).header().getPrincipalKeyword())) {
                 logger.error("Error while sending the file instructions");
                 return;
             }
@@ -124,9 +126,10 @@ public class CommunicationClient {
         }
 
         try {
-            for (File file : files) {
-                byte[] fileRequest = requestFormatter.createFileRequest(Files.readAllBytes(file.toPath()), file.getName(), fileInstructions.getUUID());
+            for (Path path : filePaths) {
+                byte[] fileRequest = requestFormatter.createFileRequest(Files.readAllBytes(path), path.toString(), fileInstructions.getUUID());
                 connection.sendData(fileRequest);
+                logger.info("Sent the file: {}", path);
             }
         } catch (IOException e) {
             logger.error("Error while sending the files", e);

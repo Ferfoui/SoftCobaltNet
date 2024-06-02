@@ -26,6 +26,14 @@ public interface RequestFormatter {
     byte[] createStringRequest(String body);
 
     /**
+     * Create a request with a {@link java.util.UUID} body
+     *
+     * @param uuid the UUID of the request
+     * @return the request
+     */
+    byte[] createAcceptRequest(UUID uuid);
+
+    /**
      * Create a request with a file body
      *
      * @param file     the file that will be sent

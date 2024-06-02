@@ -12,7 +12,7 @@ public class HeaderFormatTest {
         header.addSecondaryKeywords("filename=myFile.zip");
 
         assertEquals(HeaderPrincipalKeyword.FILE.getKeyword(), header.getPrincipalKeyword());
-        assertEquals("filename=myFile.zip", header.getSecondaryKeywords().get(0));
+        assertEquals("myFile.zip", header.getSecondaryKeywords().get("filename"));
     }
 
     @Test

@@ -25,4 +25,9 @@ public interface Request {
      */
     byte[] getBytes();
 
+    /**
+     * Returns the deserialized body of the request.
+     */
+    Object getDeserializedBody();
+
 }

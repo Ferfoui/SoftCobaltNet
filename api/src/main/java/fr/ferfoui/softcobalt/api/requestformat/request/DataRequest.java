@@ -1,6 +1,7 @@
 package fr.ferfoui.softcobalt.api.requestformat.request;
 
 import fr.ferfoui.softcobalt.api.requestformat.header.Header;
+import org.apache.commons.lang3.SerializationUtils;
 
 public record DataRequest(Header header, byte[] body) implements Request {
 
@@ -18,5 +19,13 @@ public record DataRequest(Header header, byte[] body) implements Request {
         System.arraycopy(body, 0, request, headerBytes.length, body.length);
 
         return request;
+    }
+
+    /**
+     * Returns the deserialized body of the request.
+     */
+    @Override
+    public Object getDeserializedBody() {
+        return SerializationUtils.deserialize(body);
     }
 }

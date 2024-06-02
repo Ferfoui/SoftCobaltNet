@@ -39,7 +39,7 @@ public abstract class DataQueueSocketManager {
      */
     public Runnable getQueueHandlerRunnable() {
         return () -> {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[2048];
             int bytesRead;
             try {
                 while ((bytesRead = socket.getInputStream().read(buffer)) != -1) {

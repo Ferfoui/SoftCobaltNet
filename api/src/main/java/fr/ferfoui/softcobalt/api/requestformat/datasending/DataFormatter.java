@@ -37,6 +37,19 @@ public class DataFormatter implements RequestFormatter {
     }
 
     /**
+     * Create a request with a {@link UUID} body,
+     * this is used to send the UUID of a request that has been accepted
+     *
+     * @param uuid the UUID of the request
+     * @return the request
+     */
+    @Override
+    public byte[] createAcceptRequest(UUID uuid) {
+        Header header = new Header(HeaderPrincipalKeyword.NO_PROBLEM);
+        return createRequest(header, SerializationUtils.serialize(uuid));
+    }
+
+    /**
      * Create a request with a file body
      *
      * @param file     the file that will be sent

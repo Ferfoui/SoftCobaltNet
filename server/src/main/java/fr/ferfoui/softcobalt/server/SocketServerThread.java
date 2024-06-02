@@ -3,6 +3,10 @@ package fr.ferfoui.softcobalt.server;
 import fr.ferfoui.softcobalt.api.ApiConstants;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataFormatter;
 import fr.ferfoui.softcobalt.api.requestformat.datasending.DataReader;
+import fr.ferfoui.softcobalt.api.requestformat.header.Header;
+import fr.ferfoui.softcobalt.api.requestformat.header.HeaderPrincipalKeyword;
+import fr.ferfoui.softcobalt.api.requestformat.instruction.Instructions;
+import fr.ferfoui.softcobalt.api.requestformat.instruction.SendingFileInstructions;
 import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
 import fr.ferfoui.softcobalt.api.socket.serverside.clientconnection.ClientConnection;
 import fr.ferfoui.softcobalt.api.socket.serverside.ServerSocketManager;
@@ -12,6 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 public class SocketServerThread extends Thread {
 
@@ -55,6 +63,8 @@ public class SocketServerThread extends Thread {
 
         private boolean doContinueListening = true;
 
+        private String directoryPath;
+
         /**
          * Constructor for the ClientConnection.
          *
@@ -74,22 +84,42 @@ public class SocketServerThread extends Thread {
         @Override
         public void processRequest(byte[] availableData, Logger logger) {
             String requestString = null;
-            try {
-                logger.info("Received data: {}", availableData);
-                DataReader dataReader = new DataReader(availableData);
 
-                DataRequest request = dataReader.getRequests().get(0);
+            logger.info("Received data: {}", availableData);
+            DataReader dataReader = new DataReader(availableData);
+
+            logger.info("Data reader: {}", dataReader);
+
+            DataRequest request = dataReader.getRequests().get(0);
+
+            try {
+
+                Header header = request.header();
+                if (HeaderPrincipalKeyword.INSTRUCTIONS.isKeywordMatching(header.getPrincipalKeyword())) {
+
+                    SendingFileInstructions instructions = (SendingFileInstructions) request.getDeserializedBody();
+                    directoryPath = instructions.getDirectoryPath();
+                    logger.info("Received instructions: '{}'", instructions.getUUID().toString());
+                    sendData(dataFormatter.createAcceptRequest(instructions.getUUID()));
+
+                    return;
+                }
+
                 requestString = new String(request.body(), ApiConstants.RequestFormatConstants.DEFAULT_CHARSET);
 
-                logger.info("Received request: '{}'", requestString);
 
-            } catch (IOException e) {
-                logger.error("Error reading request", e);
-            }
+                if (HeaderPrincipalKeyword.FILE.isKeywordMatching(header.getPrincipalKeyword())) {
+                    logger.info("Received file: '{}'", requestString);
 
-            try {
-                String response = "Server response for: '" + requestString + "'";
-                sendData(dataFormatter.createStringRequest(response));
+                    /*Path filePath = Paths.get(directoryPath, header.getSecondaryKeywords().get(ApiConstants.RequestFormatConstants.FILENAME_KEYWORD));
+
+                    Files.write(filePath, request.body(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);*/
+                } else {
+
+                    String response = "Server response for: '" + requestString + "'";
+                    sendData(dataFormatter.createStringRequest(response));
+                }
+
             } catch (IOException e) {
                 logger.error("Error sending response", e);
             }
