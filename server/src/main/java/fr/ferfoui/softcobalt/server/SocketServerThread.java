@@ -14,6 +14,7 @@ import fr.ferfoui.softcobalt.common.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -88,8 +89,6 @@ public class SocketServerThread extends Thread {
             logger.info("Received data: {}", availableData);
             DataReader dataReader = new DataReader(availableData);
 
-            logger.info("Data reader: {}", dataReader);
-
             DataRequest request = dataReader.getRequests().get(0);
 
             try {
@@ -99,6 +98,7 @@ public class SocketServerThread extends Thread {
 
                     SendingFileInstructions instructions = (SendingFileInstructions) request.getDeserializedBody();
                     directoryPath = instructions.getDirectoryPath();
+
                     logger.info("Received instructions: '{}'", instructions.getUUID().toString());
                     sendData(dataFormatter.createAcceptRequest(instructions.getUUID()));
 
@@ -111,9 +111,10 @@ public class SocketServerThread extends Thread {
                 if (HeaderPrincipalKeyword.FILE.isKeywordMatching(header.getPrincipalKeyword())) {
                     logger.info("Received file: '{}'", requestString);
 
-                    /*Path filePath = Paths.get(directoryPath, header.getSecondaryKeywords().get(ApiConstants.RequestFormatConstants.FILENAME_KEYWORD));
 
-                    Files.write(filePath, request.body(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);*/
+                    Path filePath = Path.of(directoryPath, header.getSecondaryKeywords().get(ApiConstants.RequestFormatConstants.FILENAME_KEYWORD));
+
+                    Files.write(filePath, request.body(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
                 } else {
 
                     String response = "Server response for: '" + requestString + "'";
@@ -121,7 +122,7 @@ public class SocketServerThread extends Thread {
                 }
 
             } catch (IOException e) {
-                logger.error("Error sending response", e);
+                logger.error("Error handling the request response", e);
             }
 
             if (requestString != null && requestString.contains("exit")) {
