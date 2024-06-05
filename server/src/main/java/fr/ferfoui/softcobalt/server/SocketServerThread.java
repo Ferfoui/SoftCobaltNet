@@ -11,6 +11,7 @@ import fr.ferfoui.softcobalt.api.requestformat.request.DataRequest;
 import fr.ferfoui.softcobalt.api.socket.serverside.clientconnection.ClientConnection;
 import fr.ferfoui.softcobalt.api.socket.serverside.ServerSocketManager;
 import fr.ferfoui.softcobalt.common.Constants;
+import fr.ferfoui.softcobalt.common.file.DirectoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +115,7 @@ public class SocketServerThread extends Thread {
 
                     Path filePath = Path.of(directoryPath, header.getSecondaryKeywords().get(ApiConstants.RequestFormatConstants.FILENAME_KEYWORD));
 
-                    Files.write(filePath, request.body(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                    DirectoryManager.saveFile(filePath, request.body());
                 } else {
 
                     String response = "Server response for: '" + requestString + "'";
