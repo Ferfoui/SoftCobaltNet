@@ -1,6 +1,7 @@
 package fr.ferfoui.softcobalt.client;
 
 import fr.ferfoui.softcobalt.api.network.CommunicationClient;
+import fr.ferfoui.softcobalt.client.gui.CobaltApplication;
 import fr.ferfoui.softcobalt.common.Constants;
 import fr.ferfoui.softcobalt.common.file.FileCollector;
 import org.slf4j.Logger;
@@ -16,7 +17,10 @@ public class ClientMain {
 
 
     public static void main(String[] args) {
+        CobaltApplication.launch(CobaltApplication.class, args);
+    }
 
+    public static void test() {
         FileCollector fileCollector = new FileCollector("");
 
         try {
@@ -37,7 +41,7 @@ public class ClientMain {
             communicationClient.sendText(message);
 
             String response = new String(communicationClient.readData());
-        
+
             logger.info("Received response: {}", response);
         }*/
 
@@ -49,8 +53,6 @@ public class ClientMain {
 
         communicationClient.sendText(message);
         communicationClient.closeCommunication();
-
-
     }
 
 }

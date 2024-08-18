@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 group = projectGroup + '.client'
@@ -17,6 +19,14 @@ dependencies {
     implementation project(':common')
 
     implementation(libs.slf4j.simple)
+
+    implementation(libs.javafx.controls)
+    implementation(libs.javafx.fxml)
+
+}
+
+application {
+    mainClass = 'ClientMain'
 }
 
 test {
